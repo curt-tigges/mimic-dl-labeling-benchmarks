@@ -1,3 +1,17 @@
+# HLAN Model for Mimic-III Note Label Prediction
+The below content is all derived from the original authors of the linked paper. To train this model, I did the following:
+
+1. Set Tensorflow to version 1.x.
+```
+# The project requires Tensorflow 1.x, and is not compatible with Tensorflow 2.x. Ensure the correct version is installed, or set the tensorflow version to 1x. The following works for Colab notebooks.
+%tensorflow_version 1.x
+```
+2. Run the training process.
+```
+!python HAN_train.py --dataset mimic3-ds-50 --batch_size 32 --per_label_attention=True --per_label_sent_only=False --num_epochs 100 --report_rand_pred=False --running_times 1 --early_stop_lr 0.00002 --remove_ckpts_before_train=False --use_label_embedding=True --ckpt_dir checkpoint_HLAN+LE_50/ --use_sent_split_padded_version=False --marking_id 50-hlan --gpu=True
+```
+
+
 # Explainable Automated Medical Coding
 
 This project proposes an explainable automated medical coding approach based on Hierarchical Label-wise Attention Network and label embedding initialisation. The approach can be applied to multi-label text classification in any domains.
