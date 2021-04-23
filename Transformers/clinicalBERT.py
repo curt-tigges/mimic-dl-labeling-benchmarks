@@ -10,6 +10,7 @@ from transformers import AutoTokenizer, AutoModel
 
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import LabelBinarizer
+import torch.nn as nn
 
 import time
 start_time = time.time()
@@ -286,7 +287,7 @@ class BERTClass(torch.nn.Module):
 
 model = BERTClass()
 model.to(device)
-
+model = torch.nn.DataParallel(model)
 
 # %%
 
