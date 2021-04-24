@@ -351,7 +351,7 @@ def pick_model(args, dicts):
         model.load_state_dict(sd)
     if args.gpu >= 0:
         # model.cuda(args.gpu)
-        func_log("Let's use ", torch.cuda.device_count(), " GPUs!")
+        func_log("Let's use {} GPUs!".format(torch.cuda.device_count()))
         model = torch.nn.DataParallel(model)
         model.to(device)
     return model

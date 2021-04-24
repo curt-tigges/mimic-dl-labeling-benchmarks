@@ -25,8 +25,8 @@ def train(args, model, optimizer, epoch, gpu, data_loader):
                                                  torch.LongTensor(masks), torch.FloatTensor(labels)
 
             if gpu >= 0:
-                inputs_id, segments, masks, labels = inputs_id.cuda(gpu), segments.cuda(gpu), \
-                                                     masks.cuda(gpu), labels.cuda(gpu)
+                inputs_id, segments, masks, labels = inputs_id.to(device), segments.to(device), \
+                                                     masks.to(device), labels.to(device)
 
             output, loss = model(inputs_id, segments, masks, labels)
         else:
@@ -36,7 +36,7 @@ def train(args, model, optimizer, epoch, gpu, data_loader):
             inputs_id, labels = torch.LongTensor(inputs_id), torch.FloatTensor(labels)
 
             if gpu >= 0:
-                inputs_id, labels, text_inputs = inputs_id.cuda(gpu), labels.cuda(gpu), text_inputs.cuda(gpu)
+                inputs_id, labels, text_inputs = inputs_id.to(device), labels.to(device), text_inputs.to(device)
 
             output, loss = model(inputs_id, labels, text_inputs)
 
@@ -71,8 +71,8 @@ def test(args, model, data_path, fold, gpu, dicts, data_loader):
                                                      torch.LongTensor(masks), torch.FloatTensor(labels)
 
                 if gpu >= 0:
-                    inputs_id, segments, masks, labels = inputs_id.cuda(
-                        gpu), segments.cuda(gpu), masks.cuda(gpu), labels.cuda(gpu)
+                    inputs_id, segments, masks, labels = inputs_id.to(device), segments.to(device), \
+                                                         masks.to(device), labels.to(device)
 
                 output, loss = model(inputs_id, segments, masks, labels)
             else:
