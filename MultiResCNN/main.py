@@ -36,9 +36,6 @@ if __name__ == "__main__":
     dicts = load_lookups(args)
 
     model = pick_model(args, dicts)
-    model = torch.nn.DataParallel(model)
-    if args.gpu:
-        model = torch.nn.DataParallel(model)
     print(model)
 
     if not args.test_model:
@@ -160,4 +157,3 @@ if __name__ == "__main__":
                 model = pick_model(args, dicts)
 
     func_log("end")
-

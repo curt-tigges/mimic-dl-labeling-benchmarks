@@ -7,9 +7,6 @@ import gensim.models.word2vec as w2v
 import gensim.models.fasttext as fasttext
 import codecs
 import re
-import time
-from torch import cuda
-device = 'cuda' if cuda.is_available() else 'cpu'
 
 def gensim_to_embeddings(wv_file, vocab_file, Y, outfile=None):
     model = gensim.models.Word2Vec.load(wv_file)
@@ -1022,8 +1019,9 @@ def build_pretrain_embedding(embedding_path, word_alphabet, norm):
 
     return pretrain_emb, embedd_dim
 
+import logging, time
 start_time = time.time()
 def func_log(msg):
-    cur = time.strftime("%Y-%m-%d %H:%M:%S")
     elapsed = time.time() - start_time
-    print("{} ({:.3f}): {}".format(cur, elapsed, msg))
+    logging.info("({:.3f}): {}".format(elapsed, msg))
+
