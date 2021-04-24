@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch.nn.init import xavier_uniform_ as xavier_uniform
 from elmo.elmo import Elmo
 import json
-from utils import build_pretrain_embedding, load_embeddings
+from utils import build_pretrain_embedding, load_embeddings, func_log
 from math import floor
 
 class WordRep(nn.Module):
@@ -15,7 +15,7 @@ class WordRep(nn.Module):
         self.gpu = args.gpu
 
         if args.embed_file:
-            print("loading pretrained embeddings from {}".format(args.embed_file))
+            func_log("loading pretrained embeddings from {}".format(args.embed_file))
             if args.use_ext_emb:
                 pretrain_word_embedding, pretrain_emb_dim = build_pretrain_embedding(args.embed_file, dicts['w2ind'],
                                                                                      True)
@@ -297,10 +297,10 @@ class Bert_seq_cls(nn.Module):
     def __init__(self, args, Y):
         super(Bert_seq_cls, self).__init__()
 
-        print("loading pretrained bert from {}".format(args.bert_dir))
+        func_log("loading pretrained bert from {}".format(args.bert_dir))
         config_file = os.path.join(args.bert_dir, 'bert_config.json')
         self.config = BertConfig.from_json_file(config_file)
-        print("Model config {}".format(self.config))
+        func_log("Model config {}".format(self.config))
         self.bert = BertModel.from_pretrained(args.bert_dir)
 
         self.dim_reduction = nn.Linear(self.config.hidden_size, args.num_filter_maps)

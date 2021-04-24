@@ -1,11 +1,11 @@
 
 import torch
 import numpy as np
-from utils import all_metrics, print_metrics
+from utils import all_metrics, print_metrics, func_log
 
 def train(args, model, optimizer, epoch, gpu, data_loader):
 
-    print("EPOCH %d" % epoch)
+    func_log("EPOCH %d" % epoch)
 
     losses = []
 
@@ -51,7 +51,7 @@ def train(args, model, optimizer, epoch, gpu, data_loader):
 def test(args, model, data_path, fold, gpu, dicts, data_loader):
 
     filename = data_path.replace('train', fold)
-    print('file for evaluation: %s' % filename)
+    func_log('file for evaluation: %s' % filename)
     num_labels = len(dicts['ind2c'])
 
     y, yhat, yhat_raw, hids, losses = [], [], [], [], []

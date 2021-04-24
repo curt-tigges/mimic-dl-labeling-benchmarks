@@ -27,16 +27,16 @@ if __name__ == "__main__":
         torch.manual_seed(args.random_seed)
         torch.cuda.manual_seed_all(args.random_seed)
 
-    print(args)
+    func_log(args)
 
     csv.field_size_limit(min(sys.maxsize, 2147483646))
 
     # load vocab and other lookups
-    print("loading lookups...")
+    func_log("loading lookups...")
     dicts = load_lookups(args)
 
     model = pick_model(args, dicts)
-    print(model)
+    func_log(model)
 
     if not args.test_model:
         optimizer = optim.Adam(model.parameters(), weight_decay=args.weight_decay, lr=args.lr)
@@ -151,7 +151,7 @@ if __name__ == "__main__":
         if args.criterion in metrics_hist.keys():
             if early_stop(metrics_hist, args.criterion, args.patience):
                 #stop training, do tests on test and train sets, and then stop the script
-                print("%s hasn't improved in %d epochs, early stopping..." % (args.criterion, args.patience))
+                func_log("%s hasn't improved in %d epochs, early stopping..." % (args.criterion, args.patience))
                 test_only = True
                 args.test_model = '%s/model_best_%s.pth' % (model_dir, args.criterion)
                 model = pick_model(args, dicts)

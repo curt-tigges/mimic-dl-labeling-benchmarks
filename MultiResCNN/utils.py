@@ -1020,8 +1020,10 @@ def build_pretrain_embedding(embedding_path, word_alphabet, norm):
     return pretrain_emb, embedd_dim
 
 import logging, time
+logging.basicConfig(filename='./logging_logs.txt', level=logging.INFO)
 start_time = time.time()
 def func_log(msg):
+    cur = time.strftime("%Y-%m-%d %H:%M:%S")
     elapsed = time.time() - start_time
-    logging.info("({:.3f}): {}".format(elapsed, msg))
+    logging.info("{} ({:.3f}): {}".format(cur, elapsed, msg))
 
