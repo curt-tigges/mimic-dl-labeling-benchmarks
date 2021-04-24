@@ -25,6 +25,31 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import pairwise
 import matplotlib.pyplot as plt
 
+import time
+import logging
+import logging.handlers
+
+logger = logging.getLogger(__name__)
+
+formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] %(message)s')
+streamHandler = logging.StreamHandler()
+fileHandler = logging.FileHandler('./server.log')
+streamHandler.setFormatter(formatter)
+fileHandler.setFormatter(formatter)
+
+logger.addHandler(streamHandler)
+logger.addHandler(fileHandler)
+
+start_time = time.time()
+
+
+def func_log(*msgs):
+    elapsed = time.time() - start_time
+    logging.info("({:.3f}): {}".format(elapsed, msgs))
+
+
+func_log('start')
+
 #tf.reset_default_graph()
 
 # Setting the seed for numpy-generated random numbers
@@ -98,9 +123,9 @@ tf.app.flags.DEFINE_string("training_data_path_mimic3_ds","../datasets/mimiciii_
 tf.app.flags.DEFINE_string("validation_data_path_mimic3_ds","../datasets/mimiciii_dev_th0.txt","path of validation/dev data.") # for mimic3-ds dataset
 tf.app.flags.DEFINE_string("testing_data_path_mimic3_ds","../datasets/mimiciii_test_th0.txt","path of testing data.") # for mimic3-ds dataset
 
-tf.app.flags.DEFINE_string("training_data_path_mimic3_ds_50","../datasets/mimiciii_train_50_th0.txt","path of training data.") # for mimic3-ds-50 dataset
-tf.app.flags.DEFINE_string("validation_data_path_mimic3_ds_50","../datasets/mimiciii_dev_50_th0.txt","path of validation/dev data.") # for mimic3-ds-50 dataset
-tf.app.flags.DEFINE_string("testing_data_path_mimic3_ds_50","../datasets/mimiciii_test_50_th0.txt","path of testing data.") # for mimic3-ds-50 dataset
+tf.app.flags.DEFINE_string("training_data_path_mimic3_ds_50","/root/mimic-dl-labeling-benchmarks/HLAN/data_preprocessing/mimiciii_train_50_th0.txt","path of training data.") # for mimic3-ds-50 dataset
+tf.app.flags.DEFINE_string("validation_data_path_mimic3_ds_50","/root/mimic-dl-labeling-benchmarks/HLAN/data_preprocessing/mimiciii_dev_50_th0.txt","path of validation/dev data.") # for mimic3-ds-50 dataset
+tf.app.flags.DEFINE_string("testing_data_path_mimic3_ds_50","/root/mimic-dl-labeling-benchmarks/HLAN/data_preprocessing/mimiciii_test_50_th0.txt","path of testing data.") # for mimic3-ds-50 dataset
 
 #top 50 labels
 tf.app.flags.DEFINE_string("training_data_path_mimic3_ds_charlson_50","../datasets/mimiciii_train_full_top_50_charlson_co_morbidity.txt","path of training data.") # for mimic3-ds-charlson-50 dataset
@@ -134,8 +159,8 @@ tf.app.flags.DEFINE_string("word2vec_model_path_zhihu","../embeddings/word150000
 tf.app.flags.DEFINE_string("word2vec_model_path_sof","../embeddings/word-sof-sample-final-new.bin-100","word2vec's vocabulary and vectors")
 tf.app.flags.DEFINE_string("word2vec_model_path_cua","../embeddings/word-citeulike-a.bin-100","word2vec's vocabulary and vectors")
 tf.app.flags.DEFINE_string("word2vec_model_path_cut","../embeddings/word-citeulike-t-th10.bin-100","word2vec's vocabulary and vectors")
-tf.app.flags.DEFINE_string("word2vec_model_path_mimic3_ds","../embeddings/processed_full.w2v","gensim word2vec's vocabulary and vectors") #for both mimic-iii and mimic-iii-50
-tf.app.flags.DEFINE_string("word2vec_model_path_mimic3_ds_50","../embeddings/processed_full.w2v","gensim word2vec's vocabulary and vectors") #for mimic-iii-50
+tf.app.flags.DEFINE_string("word2vec_model_path_mimic3_ds","/root/mimic-dl-labeling-benchmarks/HLAN/embeddings/processed_full.w2v","gensim word2vec's vocabulary and vectors") #for both mimic-iii and mimic-iii-50
+tf.app.flags.DEFINE_string("word2vec_model_path_mimic3_ds_50","/root/mimic-dl-labeling-benchmarks/HLAN/embeddings/processed_full.w2v","gensim word2vec's vocabulary and vectors") #for mimic-iii-50
 
 tf.app.flags.DEFINE_string("emb_model_path_bib","../embeddings/tag-all-bib-final.bin-300","pre-trained model from bibsonomy labels")
 tf.app.flags.DEFINE_string("emb_model_path_zhihu","../embeddings/tag_all.bin-300","pre-trained model from zhihu labels")
@@ -144,7 +169,8 @@ tf.app.flags.DEFINE_string("emb_model_path_sof","../embeddings/tag-sof-all.bin-3
 tf.app.flags.DEFINE_string("emb_model_path_cua","../embeddings/tag-citeulike-a-all.bin-300","pre-trained model from cua labels")
 #tf.app.flags.DEFINE_string("emb_model_path_cut","../embeddings/tag-citeulike-t.bin-300","pre-trained model from cut labels")
 tf.app.flags.DEFINE_string("emb_model_path_cut","../embeddings/tag-citeulike-t-all.bin-300","pre-trained model from cut labels")
-tf.app.flags.DEFINE_string("emb_model_path_mimic3_ds","../embeddings/word-mimic3-ds-label.model","pre-trained model from mimic3-ds labels")
+#tf.app.flags.DEFINE_string("emb_model_path_mimic3_ds","../embeddings/word-mimic3-ds-label.model","pre-trained model from mimic3-ds labels")
+tf.app.flags.DEFINE_string("emb_model_path_mimic3_ds","/root/mimic-dl-labeling-benchmarks/HLAN/embeddings/word-mimic3-ds-label.model","pre-trained model from mimic3-ds labels")
 # label emebedding for initialisation, also see def instantiate_weights(self) in HAN_model_dynamic.py
 tf.app.flags.DEFINE_string("emb_model_path_mimic3_ds_init","../embeddings/code-emb-mimic3-tr-400.model","pre-trained model from mimic3-ds labels for label embedding initialisation: final projection matrix, self.W_projection.")
 tf.app.flags.DEFINE_string("emb_model_path_mimic3_ds_init_per_label","../embeddings/code-emb-mimic3-tr-200.model","pre-trained model from mimic3-ds labels for label embedding initialisation: per label context matrices, self.context_vector_word_per_label and self.context_vector_sentence_per_label") # per_label means the per-label Context_vectors.
@@ -204,7 +230,7 @@ def main(_):
         label_sim_mat = get_label_sim_matrix(vocabulary_index2word_label,emb_model_path,name_scope=FLAGS.dataset)
         
         #subsumption relations: using external knowledge bases
-        label_sub_mat = get_label_sub_matrix(vocabulary_word2index_label,kb_path=FLAGS.kb_icd9,name_scope='icd9');print('using icd9 relations')
+        label_sub_mat = get_label_sub_matrix(vocabulary_word2index_label,kb_path=FLAGS.kb_icd9,name_scope='icd9');func_log('using icd9 relations')
         
         #configurations:
         #FLAGS.batch_size = 128
@@ -221,7 +247,7 @@ def main(_):
         word2vec_model_path = FLAGS.word2vec_model_path_mimic3_ds_50
         #choose the one based on the FLAGS.use_sent_split_padded_version option
         training_data_path = FLAGS.training_data_path_mimic3_ds_50.replace('_th0','_sent_split_th0_for_HAN') if FLAGS.use_sent_split_padded_version else FLAGS.training_data_path_mimic3_ds_50
-        print('path selected:',training_data_path, FLAGS.use_sent_split_padded_version)
+        func_log('path selected: {} {}'.format(training_data_path, FLAGS.use_sent_split_padded_version))
         validation_data_path = FLAGS.validation_data_path_mimic3_ds_50.replace('_th0','_sent_split_th0_for_HAN') if FLAGS.use_sent_split_padded_version else FLAGS.validation_data_path_mimic3_ds_50
         testing_data_path = FLAGS.testing_data_path_mimic3_ds_50.replace('_th0','_sent_split_th0_for_HAN') if FLAGS.use_sent_split_padded_version else FLAGS.testing_data_path_mimic3_ds_50
         emb_model_path = FLAGS.emb_model_path_mimic3_ds #using the one learned from the full label sets of mimic-iii discharge summaries
@@ -235,7 +261,7 @@ def main(_):
         label_sim_mat = get_label_sim_matrix(vocabulary_index2word_label,emb_model_path,name_scope=FLAGS.dataset)
         
         #subsumption relations: using external knowledge bases
-        label_sub_mat = get_label_sub_matrix(vocabulary_word2index_label,kb_path=FLAGS.kb_icd9,name_scope='icd9-50');print('using icd9 relations')
+        label_sub_mat = get_label_sub_matrix(vocabulary_word2index_label,kb_path=FLAGS.kb_icd9,name_scope='icd9-50');func_log('using icd9 relations')
         
         #configurations:
         #FLAGS.batch_size = 128
@@ -264,7 +290,7 @@ def main(_):
         label_sim_mat = get_label_sim_matrix(vocabulary_index2word_label,emb_model_path,name_scope=FLAGS.dataset)
         
         #subsumption relations: using external knowledge bases
-        label_sub_mat = get_label_sub_matrix(vocabulary_word2index_label,kb_path=FLAGS.kb_icd9,name_scope='icd9-shielding-th50');print('using icd9 relations')
+        label_sub_mat = get_label_sub_matrix(vocabulary_word2index_label,kb_path=FLAGS.kb_icd9,name_scope='icd9-shielding-th50');func_log('using icd9 relations')
         
         #configurations:
         #FLAGS.batch_size = 128
@@ -277,7 +303,7 @@ def main(_):
         FLAGS.kfold = 0 #using pre-defined data split
         
     else:
-        print("dataset unrecognisable")
+        func_log("dataset unrecognisable")
         sys.exit()
     
     # create common filename prefix for the outputs
@@ -285,20 +311,20 @@ def main(_):
     filename_common_prefix = 'l2 ' + str(FLAGS.lambda_sim) + " l3 " + str(FLAGS.lambda_sub) + ' b_s' + str(FLAGS.batch_size) + ' pred_th' + str(FLAGS.pred_threshold) + ' gp_id' + str(FLAGS.marking_id)
     
     num_classes=len(vocabulary_word2index_label)
-    print(vocabulary_index2word_label[0],vocabulary_index2word_label[1])
+    func_log(vocabulary_index2word_label[0],vocabulary_index2word_label[1])
     trainX, trainY, testX, testY = None, None, None, None
     #building the vocabulary list from the pre-trained word embeddings
     vocabulary_word2index, vocabulary_index2word = create_vocabulary(word2vec_model_path,name_scope=FLAGS.dataset + "-HAN")
     
     # check sim and sub relations
-    print("label_sim_mat:",label_sim_mat.shape)
-    print("label_sim_mat[0]:",label_sim_mat[0])
-    print("label_sub_mat:",label_sub_mat.shape)
-    print("label_sub_mat[0]:",label_sub_mat[0])
-    print("label_sub_mat_sum:",np.sum(label_sub_mat))
+    func_log("label_sim_mat:",label_sim_mat.shape)
+    func_log("label_sim_mat[0]:",label_sim_mat[0])
+    func_log("label_sub_mat:",label_sub_mat.shape)
+    func_log("label_sub_mat[0]:",label_sub_mat[0])
+    func_log("label_sub_mat_sum:",np.sum(label_sub_mat))
     
     vocab_size = len(vocabulary_word2index)
-    print("vocab_size:",vocab_size)
+    func_log("vocab_size:",vocab_size)
     
     # choosing whether to use k-fold cross-validation, pre-defined data split (much be provided), or hold-out validation
     if FLAGS.kfold == -1: # hold-out
@@ -354,30 +380,30 @@ def main(_):
                 filelist = [f for f in os.listdir(FLAGS.ckpt_dir)]
                 for f in filelist:
                     os.remove(os.path.join(FLAGS.ckpt_dir, f))
-                print('Checkpoints from the previous fold or run removed.')
+                func_log('Checkpoints from the previous fold or run removed.')
             
-            print('\n--RUN',num_run,'START--\n')
+            func_log('\n--RUN',num_run,'START--\n')
             start_time_train = time.time() # staring time in training
             # k-fold dataset creation
             trainX, trainY = train
             validX, validY = valid
             # Data preprocessing.Sequence padding
-            print("start padding & transform to one hot...")
+            func_log("start padding & transform to one hot...")
             trainX = pad_sequences(trainX, maxlen=FLAGS.sequence_length, value=0.)  # padding to max length
             validX = pad_sequences(validX, maxlen=FLAGS.sequence_length, value=0.)  # padding to max length
             #with open(FLAGS.cache_path, 'w') as data_f: #save data to cache file, so we can use it next time quickly.
             #    pickle.dump((trainX,trainY,testX,testY,vocabulary_index2word),data_f)
-            print("trainX[0]:", trainX[0]) ;#print("trainY[0]:", trainY[0])
-            #print("validX[0]:", validX[0])
+            func_log("trainX[0]:", trainX[0]) ;#func_log("trainY[0]:", trainY[0])
+            #func_log("validX[0]:", validX[0])
             # Converting labels to binary vectors
-            print("end padding & transform to one hot...")
+            func_log("end padding & transform to one hot...")
             
             saver=tf.train.Saver(max_to_keep = 1) # only keep the latest model, here is the best model
             if os.path.exists(FLAGS.ckpt_dir+"checkpoint"):
-                print("Restoring Variables from Checkpoint")
+                func_log("Restoring Variables from Checkpoint")
                 saver.restore(sess,tf.train.latest_checkpoint(FLAGS.ckpt_dir))
             else:
-                print('Initializing Variables')
+                func_log('Initializing Variables')
                 sess.run(tf.global_variables_initializer()) # which initialise parameters
                 if FLAGS.use_embedding: #load pre-trained word embedding
                     assign_pretrained_word_embedding(sess, vocabulary_index2word, vocab_size, model,num_run,word2vec_model_path=word2vec_model_path)
@@ -390,12 +416,12 @@ def main(_):
                     if FLAGS.per_label_attention:
                         assign_pretrained_label_embedding_per_label(sess,vocabulary_index2word_label,model,num_run,label_embedding_model_path=label_embedding_model_path_per_label)
                     
-            #print('loaded Uw', sess.run(model.context_vector_word))
+            #func_log('loaded Uw', sess.run(model.context_vector_word))
             curr_epoch=sess.run(model.epoch_step) # after restoring, the parameters are initialised.
-            print('curr_epoch:',curr_epoch)
+            func_log('curr_epoch:',curr_epoch)
             #3.feed data & training
             number_of_training_data=len(trainX)
-            print("number_of_training_data:",number_of_training_data)
+            func_log("number_of_training_data:",number_of_training_data)
             #previous_eval_loss=10000
             #previous_eval_fmeasure=0
             previous_micro_f1=0 # we optimise micro-f1 with validation set during training
@@ -405,7 +431,7 @@ def main(_):
             curr_step = curr_epoch*batch_size
             # iterating over epoches
             for epoch in range(curr_epoch,FLAGS.num_epochs):
-                print('start next epoch:',epoch)
+                func_log('start next epoch:',epoch)
                 # if epoch%10==0:
                     # display_results_bool=True
                 # else:
@@ -413,9 +439,9 @@ def main(_):
                 loss, acc, counter = 0.0, 0.0, 0
                 #for start, end in zip(range(0, number_of_training_data, batch_size),range(batch_size, number_of_training_data, batch_size)): # might have lost a very little part of data (105 out of 15849) here which is the mod after dividing the batch_size
                 for start, end in zip(list(range(0, number_of_training_data, batch_size)),list(range(batch_size, number_of_training_data, batch_size))+[number_of_training_data]):
-                    #print('in training:',start,end)
+                    #func_log('in training:',start,end)
                     if num_run==0 and epoch==0 and counter==0: #num_run for folds, epoch for iterations, counter for batches
-                        print("trainX[start:end]:",trainX[start:end]);#print("trainY[start:end]:",trainY[start:end])
+                        func_log("trainX[start:end]:",trainX[start:end]);#func_log("trainY[start:end]:",trainY[start:end])
                     feed_dict = {model.input_x: trainX[start:end],model.dropout_keep_prob: 0.5}
                     if not FLAGS.multi_label_flag:
                         feed_dict[model.input_y] = trainY[start:end]
@@ -428,12 +454,12 @@ def main(_):
                     
                     if FLAGS.dynamic_sem == True:
                         # # check the amount of changes
-                        #print('sim_absolute_update_sum:',np.sum(np.absolute(label_sim_mat - label_sim_mat_updated)))
-                        #print('sub_absolute_update_sum:',np.sum(np.absolute(label_sub_mat - label_sub_mat_updated)))
+                        #func_log('sim_absolute_update_sum:',np.sum(np.absolute(label_sim_mat - label_sim_mat_updated)))
+                        #func_log('sub_absolute_update_sum:',np.sum(np.absolute(label_sub_mat - label_sub_mat_updated)))
                         label_sim_mat = label_sim_mat_updated
                         label_sub_mat = label_sub_mat_updated
-                        # print("label_sim_mat[0]-updated:",label_sim_mat[0])
-                        # print("label_sub_mat[0]-updated:",label_sub_mat[0])
+                        # func_log("label_sim_mat[0]-updated:",label_sim_mat[0])
+                        # func_log("label_sub_mat[0]-updated:",label_sub_mat[0])
                         
                     curr_step=curr_step+1
                     model.writer.add_summary(curr_summary_str,curr_step)
@@ -442,7 +468,7 @@ def main(_):
                     loss,counter,acc=loss+curr_loss,counter+1,acc+curr_acc
                     # output every 50 batches
                     if counter %50==0:
-                        print("HAN==>Epoch %d\tBatch %d\tTrain Loss:%.3f\tTrain Accuracy:%.3f" %(epoch,counter,loss/float(counter),acc/float(counter))) #tTrain Accuracy:%.3f---》acc/float(counter)
+                        func_log("HAN==>Epoch %d\tBatch %d\tTrain Loss:%.3f\tTrain Accuracy:%.3f" %(epoch,counter,loss/float(counter),acc/float(counter))) #tTrain Accuracy:%.3f---》acc/float(counter)
                     
                     # using validation set to calculate validation loss, then to see whether we need to decay the learning rate.
                     # and the decay of learning rate is used for early stopping.
@@ -450,27 +476,27 @@ def main(_):
                         ##VALIDATION VALIDATION VALIDATION PART######################################################################################################
                         # to check whether the evaluation loss on testing data is decreasing, if not then half the learning rate: so the update of weights gets halved.
                         if FLAGS.batch_size!=0 and (start%(FLAGS.validate_step*FLAGS.batch_size)==0):
-                            print(epoch, FLAGS.validate_step, FLAGS.batch_size) # here shows only when start being 0, the program goes under this condition. This is okay as our dataset is not too large.
+                            func_log(epoch, FLAGS.validate_step, FLAGS.batch_size) # here shows only when start being 0, the program goes under this condition. This is okay as our dataset is not too large.
                             #eval_loss, eval_acc = do_eval(sess, model, testX, testY, batch_size,vocabulary_index2word_label)
                             #eval_loss, eval_acc,eval_prec,eval_rec,eval_fmeasure = do_eval_multilabel(sess, model, tag_pair_matrix, label_sim_matrix, testX, testY, batch_size,vocabulary_index2word_label,epoch,number_labels_to_predict=11)
                             eval_loss,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,micro_f1,_,_,_,_,_,_,_ = do_eval_multilabel_threshold(sess,model,label_sim_mat,label_sub_mat,validX,validY,batch_size,vocabulary_index2word,vocabulary_index2word_label,epoch,threshold=FLAGS.pred_threshold,display_results_bool=False,hamming_q=FLAGS.ave_labels_per_doc,top_number=FLAGS.topk,record_to_tensorboard=False)
-                            #print("validation.part. previous_eval_loss:", previous_eval_loss,";current_eval_loss:", eval_loss)
-                            print("validation.part. previous_micro_f1:", previous_micro_f1,";current_micro_f1:", micro_f1)
-                            #print("validation.part. previous_eval_fmeasure:", previous_eval_fmeasure,";current_eval_fmeasure:", eval_fmeasure)
+                            #func_log("validation.part. previous_eval_loss:", previous_eval_loss,";current_eval_loss:", eval_loss)
+                            func_log("validation.part. previous_micro_f1:", previous_micro_f1,";current_micro_f1:", micro_f1)
+                            #func_log("validation.part. previous_eval_fmeasure:", previous_eval_fmeasure,";current_eval_fmeasure:", eval_fmeasure)
                             #if eval_loss > previous_eval_loss: #if loss is not decreasing compared to the previous evaluation step (here is an epoch)
                             if micro_f1 < previous_micro_f1:
                             #if eval_fmeasure < previous_eval_fmeasure: # if f-measure is not increasing
                             # reduce the learning rate by a factor of 0.5
-                                print("HAN==>validation.part.going to reduce the learning rate.")
+                                func_log("HAN==>validation.part.going to reduce the learning rate.")
                                 learning_rate1 = sess.run(model.learning_rate)
                                 lrr=sess.run([model.learning_rate_decay_half_op])
                                 learning_rate2 = sess.run(model.learning_rate) # the new learning rate
-                                print("HAN==>validation.part.learning_rate_original:", learning_rate1, " ;learning_rate_new:",learning_rate2)
+                                func_log("HAN==>validation.part.learning_rate_original:", learning_rate1, " ;learning_rate_new:",learning_rate2)
                             else:
                                 #if eval_loss<best_eval_loss:
                                 if micro_f1 > best_micro_f1:
-                                    #print("validation step: HAN==>going to save the model.eval_loss:",eval_loss,";best_eval_loss:",best_eval_loss)
-                                    print("validation step: HAN==>going to save the model.micro_f1:",micro_f1,";best_micro_f1:",best_micro_f1)
+                                    #func_log("validation step: HAN==>going to save the model.eval_loss:",eval_loss,";best_eval_loss:",best_eval_loss)
+                                    func_log("validation step: HAN==>going to save the model.micro_f1:",micro_f1,";best_micro_f1:",best_micro_f1)
                                     # save model to checkpoint
                                     save_path = FLAGS.ckpt_dir + "model.ckpt"
                                     saver.save(sess, save_path, global_step=epoch)
@@ -483,7 +509,7 @@ def main(_):
                         ##VALIDATION VALIDATION VALIDATION PART######################################################################################################
                 
                 #epoch increment
-                print("going to increment epoch counter....")
+                func_log("going to increment epoch counter....")
                 sess.run(model.epoch_increment)
 
                 # 4.show validation results during training [not testing results!]
@@ -493,26 +519,26 @@ def main(_):
                     else:
                         display_results_bool=False
                     eval_loss,eval_acc_th,eval_prec_th,eval_rec_th,eval_fmeasure_th,eval_hamming_loss_th,eval_prec_per_label_th,eval_rec_per_label_th,eval_f1_per_label_th,eval_acc_topk,eval_prec_topk,eval_rec_topk,eval_fmeasure_topk,eval_hamming_loss_topk,eval_prec_per_label_topk,eval_rec_per_label_topk,eval_f1_per_label_topk,macro_accuracy, macro_precision, macro_recall, macro_f1, macro_auc, micro_accuracy, micro_precision, micro_recall, micro_f1, micro_auc,_,_,_,_,_,_ = do_eval_multilabel_threshold(sess,model,label_sim_mat,label_sub_mat,validX,validY,batch_size,vocabulary_index2word,vocabulary_index2word_label,epoch,threshold=FLAGS.pred_threshold,display_results_bool=display_results_bool,hamming_q=FLAGS.ave_labels_per_doc,top_number=FLAGS.topk,record_to_tensorboard=True)
-                    print('lambda_sim', FLAGS.lambda_sim, 'lambda_sub', FLAGS.lambda_sub)
-                    print("HAN==>Epoch %d Validation Loss:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (epoch,eval_loss,eval_acc_th,eval_hamming_loss_th,eval_prec_th,eval_rec_th,eval_fmeasure_th,eval_acc_topk,eval_hamming_loss_topk,eval_prec_topk,eval_rec_topk,eval_fmeasure_topk,macro_accuracy, macro_precision, macro_recall, macro_f1, macro_auc, micro_accuracy, micro_precision, micro_recall, micro_f1, micro_auc))
+                    func_log('lambda_sim', FLAGS.lambda_sim, 'lambda_sub', FLAGS.lambda_sub)
+                    func_log("HAN==>Epoch %d Validation Loss:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (epoch,eval_loss,eval_acc_th,eval_hamming_loss_th,eval_prec_th,eval_rec_th,eval_fmeasure_th,eval_acc_topk,eval_hamming_loss_topk,eval_prec_topk,eval_rec_topk,eval_fmeasure_topk,macro_accuracy, macro_precision, macro_recall, macro_f1, macro_auc, micro_accuracy, micro_precision, micro_recall, micro_f1, micro_auc))
                     # #output per-label metrics [not showing them here, otherwise too many texts]
-                    # print('Validation results, per label, threshold:\n' + show_per_label_results(vocabulary_index2word_label,eval_prec_per_label_th,eval_rec_per_label_th,eval_f1_per_label_th))
-                    # print('Validation results, per label, top %d:\n' % FLAGS.topk + show_per_label_results(vocabulary_index2word_label,eval_prec_per_label_topk,eval_rec_per_label_topk,eval_f1_per_label_topk))
+                    # func_log('Validation results, per label, threshold:\n' + show_per_label_results(vocabulary_index2word_label,eval_prec_per_label_th,eval_rec_per_label_th,eval_f1_per_label_th))
+                    # func_log('Validation results, per label, top %d:\n' % FLAGS.topk + show_per_label_results(vocabulary_index2word_label,eval_prec_per_label_topk,eval_rec_per_label_topk,eval_f1_per_label_topk))
                     
                     # if FLAGS.weight_decay_testing:        
-                        # print("validation.part. previous_eval_loss:", previous_eval_loss,";current_eval_loss:", eval_loss)
-                        # #print("validation.part. previous_eval_fmeasure:", previous_eval_fmeasure,";current_eval_fmeasure:", eval_fmeasure)
+                        # func_log("validation.part. previous_eval_loss:", previous_eval_loss,";current_eval_loss:", eval_loss)
+                        # #func_log("validation.part. previous_eval_fmeasure:", previous_eval_fmeasure,";current_eval_fmeasure:", eval_fmeasure)
                         # if eval_loss > previous_eval_loss: #if loss is not decreasing
                         # #if eval_fmeasure < previous_eval_fmeasure: # if f-measure is not increasing
                         # # reduce the learning rate by a factor of 0.5
-                            # print("HAN==>validation.part.going to reduce the learning rate.")
+                            # func_log("HAN==>validation.part.going to reduce the learning rate.")
                             # learning_rate1 = sess.run(model.learning_rate)
                             # lrr=sess.run([model.learning_rate_decay_half_op])
                             # learning_rate2 = sess.run(model.learning_rate) # the new learning rate
-                            # print("HAN==>validation.part.learning_rate_original:", learning_rate1, " ;learning_rate_new:",learning_rate2)
+                            # func_log("HAN==>validation.part.learning_rate_original:", learning_rate1, " ;learning_rate_new:",learning_rate2)
                         # else:
                             # if eval_loss<best_eval_loss:
-                                # print("HAN==>going to save the model.eval_loss:",eval_loss,";best_eval_loss:",best_eval_loss)
+                                # func_log("HAN==>going to save the model.eval_loss:",eval_loss,";best_eval_loss:",best_eval_loss)
                                 # # save model to checkpoint
                                 # save_path = FLAGS.ckpt_dir + "model.ckpt"
                                 # saver.save(sess, save_path, global_step=epoch)
@@ -522,8 +548,8 @@ def main(_):
                         # #previous_eval_fmeasure = eval_fmeasure
                     #if eval_loss<best_eval_loss:
                     if micro_f1>best_micro_f1:
-                        #print("after epoch: HAN==>going to save the model.eval_loss:",eval_loss,";best_eval_loss:",best_eval_loss)
-                        print("after the epoch: HAN==>going to save the model.micro_f1:",micro_f1,";best_micro_f1:",best_micro_f1)
+                        #func_log("after epoch: HAN==>going to save the model.eval_loss:",eval_loss,";best_eval_loss:",best_eval_loss)
+                        func_log("after the epoch: HAN==>going to save the model.micro_f1:",micro_f1,";best_micro_f1:",best_micro_f1)
                         # save model to checkpoint
                         save_path = FLAGS.ckpt_dir + "model.ckpt"
                         saver.save(sess, save_path, global_step=epoch)
@@ -536,7 +562,7 @@ def main(_):
             
             # reload the best model to get the final validation results and testing 
             if os.path.exists(FLAGS.ckpt_dir+"checkpoint"):
-                print("Restoring Variables from Checkpoint of the Best Validation Model")
+                func_log("Restoring Variables from Checkpoint of the Best Validation Model")
                 saver.restore(sess,tf.train.latest_checkpoint(FLAGS.ckpt_dir))
             
             # visualise the model weights (so far, for HLAN only)
@@ -551,32 +577,32 @@ def main(_):
                 
             valid_loss[num_run], valid_acc_th[num_run],valid_prec_th[num_run],valid_rec_th[num_run],valid_fmeasure_th[num_run],valid_hamming_loss_th[num_run],valid_prec_per_label_th[num_run],valid_rec_per_label_th[num_run],valid_f1_per_label_th[num_run],valid_acc_topk[num_run],valid_prec_topk[num_run],valid_rec_topk[num_run],valid_fmeasure_topk[num_run],valid_hamming_loss_topk[num_run],valid_prec_per_label_topk[num_run],valid_rec_per_label_topk[num_run],valid_f1_per_label_topk[num_run],valid_macro_accuracy[num_run], valid_macro_precision[num_run], valid_macro_recall[num_run], valid_macro_f1[num_run], valid_macro_auc[num_run], valid_micro_accuracy[num_run], valid_micro_precision[num_run], valid_micro_recall[num_run], valid_micro_f1[num_run], valid_micro_auc[num_run],valid_micro_precision_diag[num_run], valid_micro_recall_diag[num_run], valid_micro_f1_diag[num_run], valid_micro_precision_proc[num_run], valid_micro_recall_proc[num_run], valid_micro_f1_proc[num_run] = do_eval_multilabel_threshold(sess,model,label_sim_mat,label_sub_mat,validX,validY,batch_size,vocabulary_index2word,vocabulary_index2word_label,epoch,threshold=FLAGS.pred_threshold,display_results_bool=True,hamming_q=FLAGS.ave_labels_per_doc,top_number=FLAGS.topk,record_to_tensorboard=False)
             
-            print("HAN==>Run %d Validation results:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (num_run,valid_loss[num_run],valid_acc_th[num_run],valid_hamming_loss_th[num_run],valid_prec_th[num_run],valid_rec_th[num_run],valid_fmeasure_th[num_run],valid_acc_topk[num_run],valid_hamming_loss_topk[num_run],valid_prec_topk[num_run],valid_rec_topk[num_run],valid_fmeasure_topk[num_run],valid_macro_accuracy[num_run], valid_macro_precision[num_run], valid_macro_recall[num_run], valid_macro_f1[num_run], valid_macro_auc[num_run], valid_micro_accuracy[num_run], valid_micro_precision[num_run], valid_micro_recall[num_run], valid_micro_f1[num_run], valid_micro_auc[num_run]))
+            func_log("HAN==>Run %d Validation results:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (num_run,valid_loss[num_run],valid_acc_th[num_run],valid_hamming_loss_th[num_run],valid_prec_th[num_run],valid_rec_th[num_run],valid_fmeasure_th[num_run],valid_acc_topk[num_run],valid_hamming_loss_topk[num_run],valid_prec_topk[num_run],valid_rec_topk[num_run],valid_fmeasure_topk[num_run],valid_macro_accuracy[num_run], valid_macro_precision[num_run], valid_macro_recall[num_run], valid_macro_f1[num_run], valid_macro_auc[num_run], valid_micro_accuracy[num_run], valid_micro_precision[num_run], valid_micro_recall[num_run], valid_micro_f1[num_run], valid_micro_auc[num_run]))
             
             #output code type metrics (if mimic)
             if 'mimic3-ds' in FLAGS.dataset:
-                print('Validation diagnosis results, prec, rec, F1:', valid_micro_precision_diag[num_run], valid_micro_recall_diag[num_run], valid_micro_f1_diag[num_run])
-                print('Validation procedure results, prec, rec, F1:', valid_micro_precision_proc[num_run], valid_micro_recall_proc[num_run], valid_micro_f1_proc[num_run])
+                func_log('Validation diagnosis results, prec, rec, F1:', valid_micro_precision_diag[num_run], valid_micro_recall_diag[num_run], valid_micro_f1_diag[num_run])
+                func_log('Validation procedure results, prec, rec, F1:', valid_micro_precision_proc[num_run], valid_micro_recall_proc[num_run], valid_micro_f1_proc[num_run])
                 
             #output per-label metrics
-            print('Validation results, per label, threshold:\n' + show_per_label_results(vocabulary_index2word_label,valid_prec_per_label_th[num_run],valid_rec_per_label_th[num_run],valid_f1_per_label_th[num_run]))
-            print('Validation results, per label, top %d:\n' % FLAGS.topk + show_per_label_results(vocabulary_index2word_label,valid_prec_per_label_topk[num_run],valid_rec_per_label_topk[num_run],valid_f1_per_label_topk[num_run]))
+            func_log('Validation results, per label, threshold:\n' + show_per_label_results(vocabulary_index2word_label,valid_prec_per_label_th[num_run],valid_rec_per_label_th[num_run],valid_f1_per_label_th[num_run]))
+            func_log('Validation results, per label, top %d:\n' % FLAGS.topk + show_per_label_results(vocabulary_index2word_label,valid_prec_per_label_topk[num_run],valid_rec_per_label_topk[num_run],valid_f1_per_label_topk[num_run]))
             
             output_valid = output_valid + "\n" + "HAN=>Run %d Validation results Validation Loss:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (num_run,valid_loss[num_run],valid_acc_th[num_run],valid_hamming_loss_th[num_run],valid_prec_th[num_run],valid_rec_th[num_run],valid_fmeasure_th[num_run],valid_acc_topk[num_run],valid_hamming_loss_topk[num_run],valid_prec_topk[num_run],valid_rec_topk[num_run],valid_fmeasure_topk[num_run],valid_macro_accuracy[num_run], valid_macro_precision[num_run], valid_macro_recall[num_run], valid_macro_f1[num_run], valid_macro_auc[num_run], valid_micro_accuracy[num_run], valid_micro_precision[num_run], valid_micro_recall[num_run], valid_micro_f1[num_run], valid_micro_auc[num_run]) + "\n" # store validation results of each run to the output_valid string.
             
             # 6.here we use the testing data, to report testing results
             test_loss[num_run], test_acc_th[num_run],test_prec_th[num_run],test_rec_th[num_run],test_fmeasure_th[num_run],test_hamming_loss_th[num_run],test_prec_per_label_th[num_run],test_rec_per_label_th[num_run],test_f1_per_label_th[num_run],test_acc_topk[num_run],test_prec_topk[num_run],test_rec_topk[num_run],test_fmeasure_topk[num_run],test_hamming_loss_topk[num_run],test_prec_per_label_topk[num_run],test_rec_per_label_topk[num_run],test_f1_per_label_topk[num_run],test_macro_accuracy[num_run], test_macro_precision[num_run], test_macro_recall[num_run], test_macro_f1[num_run], test_macro_auc[num_run], test_micro_accuracy[num_run], test_micro_precision[num_run], test_micro_recall[num_run], test_micro_f1[num_run], test_micro_auc[num_run],test_micro_precision_diag[num_run], test_micro_recall_diag[num_run], test_micro_f1_diag[num_run], test_micro_precision_proc[num_run], test_micro_recall_proc[num_run], test_micro_f1_proc[num_run] = do_eval_multilabel_threshold(sess,model,label_sim_mat,label_sub_mat,testX,testY,batch_size,vocabulary_index2word,vocabulary_index2word_label,epoch,threshold=FLAGS.pred_threshold,display_results_bool=True,hamming_q=FLAGS.ave_labels_per_doc,top_number=FLAGS.topk,record_to_tensorboard=False,output_logits=FLAGS.output_logits,output_logits_filename_prefix=filename_common_prefix,num_run=num_run) # output logit set as true for testing.
             
-            print("HAN==>Run %d Test results Test Loss:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (num_run,test_loss[num_run],test_acc_th[num_run],test_hamming_loss_th[num_run],test_prec_th[num_run],test_rec_th[num_run],test_fmeasure_th[num_run],test_acc_topk[num_run],test_hamming_loss_topk[num_run],test_prec_topk[num_run],test_rec_topk[num_run],test_fmeasure_topk[num_run],test_macro_accuracy[num_run], test_macro_precision[num_run], test_macro_recall[num_run], test_macro_f1[num_run], test_macro_auc[num_run], test_micro_accuracy[num_run], test_micro_precision[num_run], test_micro_recall[num_run], test_micro_f1[num_run], test_micro_auc[num_run]))
+            func_log("HAN==>Run %d Test results Test Loss:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (num_run,test_loss[num_run],test_acc_th[num_run],test_hamming_loss_th[num_run],test_prec_th[num_run],test_rec_th[num_run],test_fmeasure_th[num_run],test_acc_topk[num_run],test_hamming_loss_topk[num_run],test_prec_topk[num_run],test_rec_topk[num_run],test_fmeasure_topk[num_run],test_macro_accuracy[num_run], test_macro_precision[num_run], test_macro_recall[num_run], test_macro_f1[num_run], test_macro_auc[num_run], test_micro_accuracy[num_run], test_micro_precision[num_run], test_micro_recall[num_run], test_micro_f1[num_run], test_micro_auc[num_run]))
             
             #output code type metrics (if mimic)
             if 'mimic3-ds' in FLAGS.dataset:
-                print('Test diagnosis code results, prec, rec, F1:', test_micro_precision_diag[num_run], test_micro_recall_diag[num_run], test_micro_f1_diag[num_run])
-                print('Test procedure code results, prec, rec, F1:', test_micro_precision_proc[num_run], test_micro_recall_proc[num_run], test_micro_f1_proc[num_run])
+                func_log('Test diagnosis code results, prec, rec, F1:', test_micro_precision_diag[num_run], test_micro_recall_diag[num_run], test_micro_f1_diag[num_run])
+                func_log('Test procedure code results, prec, rec, F1:', test_micro_precision_proc[num_run], test_micro_recall_proc[num_run], test_micro_f1_proc[num_run])
                 
             #output per-label metrics
-            print('Test results, per label, threshold:\n' + show_per_label_results(vocabulary_index2word_label,test_prec_per_label_th[num_run],test_rec_per_label_th[num_run],test_f1_per_label_th[num_run]))
-            print('Test results, per label, top %d:\n' % FLAGS.topk + show_per_label_results(vocabulary_index2word_label,test_prec_per_label_topk[num_run],test_rec_per_label_topk[num_run],test_f1_per_label_topk[num_run]))
+            func_log('Test results, per label, threshold:\n' + show_per_label_results(vocabulary_index2word_label,test_prec_per_label_th[num_run],test_rec_per_label_th[num_run],test_f1_per_label_th[num_run]))
+            func_log('Test results, per label, top %d:\n' % FLAGS.topk + show_per_label_results(vocabulary_index2word_label,test_prec_per_label_topk[num_run],test_rec_per_label_topk[num_run],test_f1_per_label_topk[num_run]))
             
             output_test = output_test + "\n" + "HAN==>Run %d Test results Validation Loss:%.3f\tValidation Accuracy: %.3f\tValidation Hamming Loss: %.3f\tValidation Precision: %.3f\tValidation Recall: %.3f\tValidation F-measure: %.3f\tValidation Accuracy@k: %.3f\tValidation Hamming Loss@k: %.3f\tValidation Precision@k: %.3f\tValidation Recall@k: %.3f\tValidation F-measure@k: %.3f\tValidation macro-Accuracy: %.3f\tValidation macro-Precision: %.3f\tValidation macro-Recall: %.3f\tValidation macro-F-measure: %.3f\tValidation macro-AUC: %.3f\tValidation micro-Accuracy: %.3f\tValidation micro-Precision: %.3f\tValidation micro-Recall: %.3f\tValidation micro-F-measure: %.3f\tValidation micro-AUC: %.3f" % (num_run,test_loss[num_run],test_acc_th[num_run],test_hamming_loss_th[num_run],test_prec_th[num_run],test_rec_th[num_run],test_fmeasure_th[num_run],test_acc_topk[num_run],test_hamming_loss_topk[num_run],test_prec_topk[num_run],test_rec_topk[num_run],test_fmeasure_topk[num_run],test_macro_accuracy[num_run], test_macro_precision[num_run], test_macro_recall[num_run], test_macro_f1[num_run], test_macro_auc[num_run], test_micro_accuracy[num_run], test_micro_precision[num_run], test_micro_recall[num_run], test_micro_f1[num_run], test_micro_auc[num_run]) + "\n" # store the testing results of each run to the output_test string.
             
@@ -590,8 +616,8 @@ def main(_):
             setting = "batch_size: " + str(FLAGS.batch_size) + "\nembed_size: " + str(FLAGS.embed_size) + "\nvalidate_step: " + str(FLAGS.validate_step) + "\nlabel_sim_threshold: " + str(FLAGS.label_sim_threshold) + "\nlambda_sim: " + str(FLAGS.lambda_sim) + "\nlambda_sub: " + str(FLAGS.lambda_sub) + "\nnum_epochs: " + str(FLAGS.num_epochs) + "\nkeep_label_percent: " + str(FLAGS.keep_label_percent) + "\nweight_decay_testing: " + str(FLAGS.weight_decay_testing) + "\nearly_stop_lr: " + str(FLAGS.early_stop_lr) + "\ndynamic_sem: " + str(FLAGS.dynamic_sem) + "\ndynamic_sem_l2: " + str(FLAGS.dynamic_sem_l2) + "\nuse_label_embedding: " + str(FLAGS.use_label_embedding) + "\nper_label_attention: " + str(FLAGS.per_label_attention) + "\nper_label_sent_only: " + str(FLAGS.per_label_sent_only) + "\npred_threshold: " + str(FLAGS.pred_threshold)
             
             output_time_train = "--- This fold, run %s, took %s seconds ---" % (num_run, time_train[num_run])
-            print('lambda_sim', FLAGS.lambda_sim, 'lambda_sub', FLAGS.lambda_sub, 'learning_rate', FLAGS.learning_rate)
-            print(output_time_train)
+            func_log('lambda_sim', FLAGS.lambda_sim, 'lambda_sub', FLAGS.lambda_sub, 'learning_rate', FLAGS.learning_rate)
+            func_log(output_time_train)
             
             prediction_str = ""
             # output final predictions for qualitative analysis (with attention visualisation)
@@ -606,17 +632,17 @@ def main(_):
             # update the num_run
             num_run=num_run+1
                 
-    print('\n--Final Results--\n')
-    print('lambda_sim', FLAGS.lambda_sim, 'lambda_sub', FLAGS.lambda_sub)
+    func_log('\n--Final Results--\n')
+    func_log('lambda_sim', FLAGS.lambda_sim, 'lambda_sub', FLAGS.lambda_sub)
     
     # 7. report and output results    
-    print("--- The whole program took %s seconds ---" % (time.time() - start_time))
+    func_log("--- The whole program took %s seconds ---" % (time.time() - start_time))
     time_used = "--- The whole program took %s seconds ---" % (time.time() - start_time)
     if FLAGS.kfold != -1 and FLAGS.kfold != 0 or (FLAGS.kfold == 0 and FLAGS.running_times > 1):
-        print("--- The average training took %s ± %s seconds ---" % (sum(time_train)/num_runs,statistics.stdev(time_train)))
+        func_log("--- The average training took %s ± %s seconds ---" % (sum(time_train)/num_runs,statistics.stdev(time_train)))
         average_time_train = "--- The average training took %s ± %s seconds ---" % (sum(time_train)/num_runs,statistics.stdev(time_train))
     else:
-        print("--- The average training took %s ± %s seconds ---" % (sum(time_train)/num_runs,0))
+        func_log("--- The average training took %s ± %s seconds ---" % (sum(time_train)/num_runs,0))
         average_time_train = "--- The average training took %s ± %s seconds ---" % (sum(time_train)/num_runs,0)
 
     # output structured evaluation results to csv files: valid and test
@@ -636,11 +662,11 @@ def main(_):
     # output overall information: setting configuration, results, prediction and time used
     #update both output_valid and output_test with structured evaluation results
     structured_results_valid = "HAN==>Final Validation results Validation Loss:%s\tValidation Hamming Loss: %s\tValidation Accuracy: %s\tValidation Precision: %s\tValidation Recall: %s\tValidation F-measure: %s\tValidation Hamming Loss@k: %s\tValidation Accuracy@k: %s\tValidation Precision@k: %s\tValidation Recall@k: %s\tValidation F-measure@k: %s\tValidation macro-Accuracy: %s\tValidation macro-Precision: %s\tValidation macro-Recall: %s\tValidation macro-F-measure: %s\tValidation macro-AUC: %s\tValidation micro-Accuracy: %s\tValidation micro-Precision: %s\tValidation micro-Recall: %s\tValidation micro-F-measure: %s\tValidation micro-AUC: %s" % tuple(cal_ave_std(ele,with_min_max=True) for ele in [valid_loss, valid_hamming_loss_th,valid_acc_th,valid_prec_th,valid_rec_th,valid_fmeasure_th,valid_hamming_loss_topk,valid_acc_topk,valid_prec_topk,valid_rec_topk,valid_fmeasure_topk,valid_macro_accuracy, valid_macro_precision, valid_macro_recall, valid_macro_f1, valid_macro_auc, valid_micro_accuracy, valid_micro_precision, valid_micro_recall, valid_micro_f1, valid_micro_auc])
-    print(structured_results_valid) #output to console as well
+    func_log(structured_results_valid) #output to console as well
     output_valid = output_valid + '\n' + structured_results_valid + '\n'
     
     structured_results_test = "HAN==>Final Test results Test Loss:%s\tTest Hamming Loss: %s\tTest Accuracy: %s\tTest Precision: %s\tTest Recall: %s\tTest F-measure: %s\tTest Hamming Loss@k: %s\tTest Accuracy@k: %s\tTest Precision@k: %s\tTest Recall@k: %s\tTest F-measure@k: %s\tTest macro-Accuracy: %s\tTest macro-Precision: %s\tTest macro-Recall: %s\tTest macro-F-measure: %s\tTest macro-AUC: %s\tTest micro-Accuracy: %s\tTest micro-Precision: %s\tTest micro-Recall: %s\tTest micro-F-measure: %s\tTest micro-AUC: %s" % tuple(cal_ave_std(ele,with_min_max=True) for ele in [test_loss, test_hamming_loss_th,test_acc_th,test_prec_th,test_rec_th,test_fmeasure_th,test_hamming_loss_topk,test_acc_topk,test_prec_topk,test_rec_topk,test_fmeasure_topk,test_macro_accuracy, test_macro_precision, test_macro_recall, test_macro_f1, test_macro_auc, test_micro_accuracy, test_micro_precision, test_micro_recall, test_micro_f1, test_micro_auc])
-    print(structured_results_test) #output to console as well
+    func_log(structured_results_test) #output to console as well
     output_test = output_test + '\n' + structured_results_test + '\n'
     output_to_file(filename_common_prefix + '.txt', setting + '\n' + output_valid + '\n' + output_test + '\n' + prediction_str + '\n' + time_used + '\n' + average_time_train)
     
@@ -667,7 +693,7 @@ def output_to_file(file_name,str):
 
 def assign_pretrained_word_embedding(sess,vocabulary_index2word,vocab_size,model,num_run,word2vec_model_path=None):
     if num_run==0:
-        print("using pre-trained word emebedding.started.word2vec_model_path:",word2vec_model_path)
+        func_log("using pre-trained word emebedding.started.word2vec_model_path:",word2vec_model_path)
     # transform embedding input into a dictionary
     # word2vecc=word2vec.load('word_embedding.txt') #load vocab-vector fiel.word2vecc['w91874']
    
@@ -699,13 +725,13 @@ def assign_pretrained_word_embedding(sess,vocabulary_index2word,vocab_size,model
             word_embedding_2dlist[i] = np.random.uniform(-bound, bound, FLAGS.embed_size);
             count_not_exist = count_not_exist + 1  # init a random value for the word.
     word_embedding_final = np.array(word_embedding_2dlist)  # covert to 2d array.
-    #print(word_embedding_final[0]) # print the original embedding for the first word
+    #func_log(word_embedding_final[0]) # print the original embedding for the first word
     word_embedding = tf.constant(word_embedding_final, dtype=tf.float32)  # convert to tensor
     t_assign_embedding = tf.assign(model.Embedding,word_embedding)  # assign this value to our embedding variables of our model.
     sess.run(t_assign_embedding);
     if num_run==0:
-        print("word. exists embedding:", count_exist, " ;word not exist embedding:", count_not_exist)
-        print("using pre-trained word emebedding.ended...")
+        func_log("word. exists embedding:", count_exist, " ;word not exist embedding:", count_not_exist)
+        func_log("using pre-trained word emebedding.ended...")
 
 def assign_sim_sub_matrices(sess,lambda_sim,lambda_sub,label_sim_mat,label_sub_mat,model):
     if lambda_sim != 0:
@@ -719,7 +745,7 @@ def assign_sim_sub_matrices(sess,lambda_sim,lambda_sub,label_sim_mat,label_sub_m
 
 def assign_pretrained_label_embedding(sess,vocabulary_index2word_label,model,num_run,label_embedding_model_path=None):
     if num_run==0:
-        print("initialsing pre-trained label emebedding:",label_embedding_model_path)
+        func_log("initialsing pre-trained label emebedding:",label_embedding_model_path)
     
     word2vec_model_labels = Word2Vec.load(label_embedding_model_path) # for gensim word2vec models
     
@@ -743,22 +769,22 @@ def assign_pretrained_label_embedding(sess,vocabulary_index2word_label,model,num
             label_embedding_2dlist[i] = embedding / float(np.linalg.norm(embedding) + 1e-6) # normalise to unit length
             count_exist = count_exist + 1  # assign array to this word.
         else:  # no embedding for this word
-            print(label, 'embedding inexist')
+            func_log(label, 'embedding inexist')
             label_embedding_2dlist[i] = np.random.uniform(-bound, bound, FLAGS.embed_size * 4); # dimensionality as the final hidden layer of the model, which is 4 times of the input embedding size.
             count_not_exist = count_not_exist + 1  # init a random value for the word.
     label_embedding_final = np.array(label_embedding_2dlist)  # covert to 2d array.
     label_embedding_final_transposed = label_embedding_final.transpose()
-    #print(label_embedding_final.shape, label_embedding_final_transposed.shape,label_embedding_final_transposed[0]) # print the original embedding for the first word
+    #func_log(label_embedding_final.shape, label_embedding_final_transposed.shape,label_embedding_final_transposed[0]) # print the original embedding for the first word
     label_embedding_tp = tf.constant(label_embedding_final_transposed, dtype=tf.float32)  # convert to tensor, tp means transposed
     t_assign_label_embedding = tf.assign(model.W_projection,label_embedding_tp)  # assign this value to our embedding variables of our model.
     sess.run(t_assign_label_embedding);
     if num_run==0:
-        print("label. exists embedding:", count_exist, " ;label not exist embedding:", count_not_exist)
-        print("using pre-trained label emebedding.ended...")
+        func_log("label. exists embedding:", count_exist, " ;label not exist embedding:", count_not_exist)
+        func_log("using pre-trained label emebedding.ended...")
 
 def assign_pretrained_label_embedding_per_label(sess,vocabulary_index2word_label,model,num_run,label_embedding_model_path=None):
     if num_run==0:
-        print("initialsing pre-trained label embedding, per-label:",label_embedding_model_path)
+        func_log("initialsing pre-trained label embedding, per-label:",label_embedding_model_path)
     
     word2vec_model_labels = Word2Vec.load(label_embedding_model_path) # for gensim word2vec models
     
@@ -782,28 +808,28 @@ def assign_pretrained_label_embedding_per_label(sess,vocabulary_index2word_label
             label_embedding_2dlist[i] = embedding / float(np.linalg.norm(embedding) + 1e-6) # normalise to unit length
             count_exist = count_exist + 1  # assign array to this word.
         else:  # no embedding for this word
-            print(label, 'embedding inexist')
+            func_log(label, 'embedding inexist')
             label_embedding_2dlist[i] = np.random.uniform(-bound, bound, FLAGS.embed_size * 4); # dimensionality as the final hidden layer of the model, which is 4 times of the input embedding size.
             count_not_exist = count_not_exist + 1  # init a random value for the word.
     label_embedding_final = np.array(label_embedding_2dlist)  # covert to 2d array.
-    #print(label_embedding_final.shape, label_embedding_final_transposed.shape,label_embedding_final_transposed[0]) # print the original embedding for the first word
+    #func_log(label_embedding_final.shape, label_embedding_final_transposed.shape,label_embedding_final_transposed[0]) # print the original embedding for the first word
     label_embedding_tensor = tf.constant(label_embedding_final, dtype=tf.float32)  # convert to tensor
     if not FLAGS.per_label_sent_only:
         t_assign_label_embedding_word_level = tf.assign(model.context_vector_word_per_label,label_embedding_tensor)  # initialise label embedding to word-level per-label context vector
         sess.run(t_assign_label_embedding_word_level)
-        print('per-label word-level context vector initialised')
+        func_log('per-label word-level context vector initialised')
     t_assign_label_embedding_sent_level = tf.assign(model.context_vector_sentence_per_label,label_embedding_tensor)  # initialise label embedding to sent-level per-label context vector
     sess.run(t_assign_label_embedding_sent_level)
-    print('per-label sentence-level context vector initialised')
+    func_log('per-label sentence-level context vector initialised')
     if num_run==0:
-        print("label. exists embedding:", count_exist, " ;label not exist embedding:", count_not_exist)
-        print("using pre-trained label emebedding.ended...")
+        func_log("label. exists embedding:", count_exist, " ;label not exist embedding:", count_not_exist)
+        func_log("using pre-trained label emebedding.ended...")
         
 # based on a threshold, for multilabel
 def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,evalX,evalY,batch_size,vocabulary_index2word,vocabulary_index2word_label,epoch,threshold=0.5,display_results_bool=True,hamming_q=FLAGS.ave_labels_per_doc,top_number=FLAGS.topk,record_to_tensorboard=True,output_logits=False,output_logits_filename_prefix='',num_run=0):
-    #print(display_results_bool)
+    #func_log(display_results_bool)
     number_examples=len(evalX)
-    print("number_examples", number_examples)
+    func_log("number_examples", number_examples)
     #generate random index for batch and document
     #rn.seed(1)
     batch_chosen=rn.randint(0,number_examples//batch_size)
@@ -813,10 +839,10 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
     #logits_all = np.array([])
     #for start,end in zip(range(0,number_examples,batch_size),range(batch_size,number_examples,batch_size)): # a few samples in the evaluation set can be lost, due to the training and testing with the batch size (this may not be exactly divided).
     for start,end in zip(list(range(0,number_examples,batch_size)),list(range(batch_size,number_examples,batch_size))+[number_examples]):
-        #print('now evaluating:',start,end)
+        #func_log('now evaluating:',start,end)
         feed_dict = {modelToEval.input_x: evalX[start:end], modelToEval.dropout_keep_prob: 1, modelToEval.label_sim_matrix:label_sim_mat, modelToEval.label_sub_matrix:label_sub_mat}
         #if (start==0):
-        #    print(evalX[start:end])
+        #    func_log(evalX[start:end])
         if not FLAGS.multi_label_flag:
             feed_dict[modelToEval.input_y] = evalY[start:end]
         else:
@@ -838,9 +864,9 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
                 modelToEval.writer.add_summary(curr_summary_l_epoch,epoch)
         
         eval_counter=eval_counter+1
-        #print(type(logits))
+        #func_log(type(logits))
         #n=0
-        #print(len(logits)) #=batch_size
+        #func_log(len(logits)) #=batch_size
         curr_eval_acc_th=0.0
         curr_eval_prec_th=0.0
         curr_eval_rec_th=0.0
@@ -854,13 +880,13 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
             label_list_topk = get_label_using_logits(logits[x], vocabulary_index2word_label,top_number)
             # display a particular prediction result
             if x==x_chosen and start==batch_chosen*batch_size and display_results_bool==True:
-                print('doc:',*display_results(evalX[start+x],vocabulary_index2word,for_label=False))
-                print('prediction-0.5:',*display_results(label_list_th,vocabulary_index2word_label))
-                print('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
+                func_log('doc:',*display_results(evalX[start+x],vocabulary_index2word,for_label=False))
+                func_log('prediction-0.5:',*display_results(label_list_th,vocabulary_index2word_label))
+                func_log('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
                 get_indexes = lambda x, xs: [i for (y, i) in zip(xs, range(len(xs))) if x == y]
-                print('labels:',*display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
-            #print(label_list_top5)
-            #print(evalY[start:end][x])
+                func_log('labels:',*display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
+            #func_log(label_list_top5)
+            #func_log(evalY[start:end][x])
             curr_eval_acc_th=curr_eval_acc_th + calculate_accuracy(list(label_list_th), evalY[start:end][x],eval_counter)
             precision, recall = calculate_precision_recall(list(label_list_th), evalY[start:end][x],eval_counter)
             curr_eval_prec_th = curr_eval_prec_th + precision
@@ -875,7 +901,7 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
             hamming_loss_topk = calculate_hamming_loss(list(label_list_topk), evalY[start:end][x])
             curr_hamming_loss_topk = curr_hamming_loss_topk + hamming_loss_topk
 
-            #print(curr_eval_acc)
+            #func_log(curr_eval_acc)
         eval_acc_th = eval_acc_th + curr_eval_acc_th/float(len(logits))
         eval_prec_th = eval_prec_th + curr_eval_prec_th/float(len(logits))
         eval_rec_th = eval_rec_th + curr_eval_rec_th/float(len(logits))
@@ -885,17 +911,17 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
         eval_prec_topk = eval_prec_topk + curr_eval_prec_topk/float(len(logits))
         eval_rec_topk = eval_rec_topk + curr_eval_rec_topk/float(len(logits))
         eval_hamming_loss_topk = eval_hamming_loss_topk + curr_hamming_loss_topk/float(len(logits))
-        #print("eval_acc", eval_acc)
+        #func_log("eval_acc", eval_acc)
         eval_loss=eval_loss+curr_eval_loss
         #eval_counter=eval_counter+1
-        #print("eval_counter", eval_counter)
+        #func_log("eval_counter", eval_counter)
     
     #0. output raw prediction results (logits_all)
     if output_logits:
         #numpy.savetxt("pred_test.csv", logits_all, delimiter=",")
         label_list = [vocabulary_index2word_label[i] for i in range(len(vocabulary_index2word_label))]
         df_logits_all = pd.DataFrame(logits_all_sigmoid,columns=label_list)
-        print('Output pred_test_run%s.csv' % str(num_run))
+        func_log('Output pred_test_run%s.csv' % str(num_run))
         df_logits_all.to_csv("%s pred_test_run%s.csv" % (output_logits_filename_prefix, str(num_run)))
         
     #1. example-based metrics
@@ -916,7 +942,7 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
     #'macro': Calculate metrics for each label, and find their unweighted mean. This does not take label imbalance into account.
     # definitions above, see https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
     logits_binary = (logits_all_sigmoid>threshold).astype(float) # binary prediction matrix
-    #print('logits_binary:',logits_binary)
+    #func_log('logits_binary:',logits_binary)
     #logits_binary_np_array = np.array(logits_binary)
     #evalY = evalY[:len(logits_binary)] # adjust the number of evalY to those fully divided by the batch_size
     evalY_np_array = np.array(evalY)
@@ -942,7 +968,7 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
             elif code_type == 'proc':
                 list_ind_proc.append(ind)
             else:
-                print('Error: neither diag or proc,', code_to_check)
+                func_log('Error: neither diag or proc,', code_to_check)
         #get logits_binary_diag and logits_binary_proc
         logits_binary_diag = logits_binary[:,list_ind_diag]
         logits_binary_proc = logits_binary[:,list_ind_proc]
@@ -952,8 +978,8 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
         #calculate micro-averaging results
         _, micro_precision_diag, micro_recall_diag, micro_f1_diag = all_micro(logits_binary_diag.ravel(), evalY_np_array_diag.ravel())
         _, micro_precision_proc, micro_recall_proc, micro_f1_proc = all_micro(logits_binary_proc.ravel(), evalY_np_array_proc.ravel())
-        #print('diag results,prec,rec,f1:',micro_precision_diag, micro_recall_diag, micro_f1_diag)
-        #print('proc results,prec,rec,f1:',micro_precision_proc, micro_recall_proc, micro_f1_proc)
+        #func_log('diag results,prec,rec,f1:',micro_precision_diag, micro_recall_diag, micro_f1_diag)
+        #func_log('proc results,prec,rec,f1:',micro_precision_proc, micro_recall_proc, micro_f1_proc)
     else:
         micro_precision_diag, micro_recall_diag, micro_f1_diag, micro_precision_proc, micro_recall_proc, micro_f1_proc = 0.0,0.0,0.0,0.0,0.0,0.0
         
@@ -964,7 +990,7 @@ def do_eval_multilabel_threshold(sess,modelToEval,label_sim_mat,label_sub_mat,ev
     f1_per_label_th = metrics.f1_score(evalY,logits_binary,average=None)
     #per-label metrics - topk
     logits_binary_topk = get_topk_binary_using_logits_matrix(logits_all_sigmoid,top_number)
-    #print('logits_binary_topk:',logits_binary_topk)
+    #func_log('logits_binary_topk:',logits_binary_topk)
     prec_per_label_topk = metrics.precision_score(evalY,logits_binary_topk,average=None)
     rec_per_label_topk = metrics.recall_score(evalY,logits_binary_topk,average=None)
     f1_per_label_topk = metrics.f1_score(evalY,logits_binary_topk,average=None)
@@ -988,7 +1014,7 @@ def display_for_qualitative_evaluation(sess,modelToEval,label_sim_mat,label_sub_
     for start,end in zip(tqdm(list(range(0,number_examples,batch_size))),list(range(batch_size,number_examples,batch_size))+[number_examples]):
         feed_dict = {modelToEval.input_x: evalX[start:end], modelToEval.dropout_keep_prob: 1, modelToEval.label_sim_matrix:label_sim_mat, modelToEval.label_sub_matrix:label_sub_mat}
         #if (start==0):
-        #    print(evalX[start:end])
+        #    func_log(evalX[start:end])
         if not FLAGS.multi_label_flag:
             feed_dict[modelToEval.input_y] = evalY[start:end]
         else:
@@ -1005,19 +1031,19 @@ def display_for_qualitative_evaluation(sess,modelToEval,label_sim_mat,label_sub_
             # display a particular prediction result
             #if x==x_chosen and start==batch_chosen*batch_size:
             if rn_dict.get((start,x)) == 1 or (not use_random_sampling):
-                # print('doc:',*display_results(evalX[start+x],vocabulary_index2word))
-                # print('prediction-0.5:',*display_results(label_list_th,vocabulary_index2word_label))
-                # #print('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
+                # func_log('doc:',*display_results(evalX[start+x],vocabulary_index2word))
+                # func_log('prediction-0.5:',*display_results(label_list_th,vocabulary_index2word_label))
+                # #func_log('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
                 # get_indexes = lambda x, xs: [i for (y, i) in zip(xs, range(len(xs))) if x == y]
-                # print('labels:',*display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
+                # func_log('labels:',*display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
                 #doc = 'doc: ' + ' '.join(display_results(evalX[start+x],vocabulary_index2word))
                 doc = 'doc-' + str(n_doc) + ': ' + ' '.join(display_results_with_word_att_sent_att(evalX[start+x],vocabulary_index2word,word_att[x],sent_att[x],'ori'))
                 pred = 'prediction-0.5: ' + ' '.join(display_results(label_list_th,vocabulary_index2word_label))
-                #print('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
+                #func_log('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
                 get_indexes = lambda x, xs: [i for (y, i) in zip(xs, range(len(xs))) if x == y]
                 label = 'labels: ' + ' '.join(display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
                 prediction_str = prediction_str + '\n' + doc + '\n' + pred + '\n' + label + '\n'
-                #print(prediction_str)
+                #func_log(prediction_str)
                 n_doc=n_doc+1
     return prediction_str
 
@@ -1038,7 +1064,7 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
     for start,end in zip(tqdm(list(range(0,number_examples,batch_size))),list(range(batch_size,number_examples,batch_size))+[number_examples]):
         feed_dict = {modelToEval.input_x: evalX[start:end], modelToEval.dropout_keep_prob: 1, modelToEval.label_sim_matrix:label_sim_mat, modelToEval.label_sub_matrix:label_sub_mat}
         #if (start==0):
-        #    print(evalX[start:end])
+        #    func_log(evalX[start:end])
         if not FLAGS.multi_label_flag:
             feed_dict[modelToEval.input_y] = evalY[start:end]
         else:
@@ -1047,11 +1073,11 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
         #curr_eval_loss,logits= sess.run([modelToEval.loss_val,modelToEval.logits],feed_dict)#curr_eval_acc--->modelToEval.accuracy
         
         word_att_per_label,sent_att_per_label,curr_eval_loss,logits= sess.run([modelToEval.p_attention,modelToEval.p_attention_sent,modelToEval.loss_val,modelToEval.logits],feed_dict)
-        #print('word_att_per_label:',word_att_per_label.shape)
+        #func_log('word_att_per_label:',word_att_per_label.shape)
         num_classes = len(vocabulary_index2word_label)
         if not FLAGS.per_label_sent_only: # if also includes per-label word-level attention weights, there is a *dinstinct* word-level attention weight for each different label.
             #word_att_per_label: shape:[num_classes,batch_size*num_sentences,sequence_length_per_sentence]
-            list_word_att_per_label = np.split(word_att_per_label,num_classes,axis=0) #print('list_word_att_per_label:',len(list_word_att_per_label),list_word_att_per_label[0].shape)
+            list_word_att_per_label = np.split(word_att_per_label,num_classes,axis=0) #func_log('list_word_att_per_label:',len(list_word_att_per_label),list_word_att_per_label[0].shape)
         else:
             #there is a *shared* word-level attention weight for any of the labels.
             #word_att_per_label: shape:[batch_size*num_sentences,sequence_length_per_sentence]
@@ -1059,7 +1085,7 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
         
         #sent_att_per_label: shape:# shape:[num_classes,batch_size,num_sentences]
         list_sent_att_per_label = np.split(sent_att_per_label,num_classes,axis=0)
-        #print('list_sent_att_per_label:',len(list_sent_att_per_label),list_sent_att_per_label[0].shape)
+        #func_log('list_sent_att_per_label:',len(list_sent_att_per_label),list_sent_att_per_label[0].shape)
         #for word_att in word_att_per_label:
         #    word_att = np.reshape(word_att, (batch_size,FLAGS.sequence_length))
         
@@ -1069,11 +1095,11 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
             # display a particular prediction result
             #if x==x_chosen and start==batch_chosen*batch_size:
             if rn_dict.get((start,x)) == 1 or (not use_random_sampling):
-                # print('doc:',*display_results(evalX[start+x],vocabulary_index2word))
-                # print('prediction-0.5:',*display_results(label_list_th,vocabulary_index2word_label))
-                # #print('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
+                # func_log('doc:',*display_results(evalX[start+x],vocabulary_index2word))
+                # func_log('prediction-0.5:',*display_results(label_list_th,vocabulary_index2word_label))
+                # #func_log('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
                 # get_indexes = lambda x, xs: [i for (y, i) in zip(xs, range(len(xs))) if x == y]
-                # print('labels:',*display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
+                # func_log('labels:',*display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
                 #doc = 'doc: ' + ' '.join(display_results(evalX[start+x],vocabulary_index2word))
                 docs = ''
                 for pred_label_index in label_list_th:
@@ -1082,8 +1108,8 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
                         word_att = np.reshape(word_att, (end-start,FLAGS.sequence_length))
                     sent_att = list_sent_att_per_label[pred_label_index]
                     sent_att = np.reshape(sent_att, (end-start,FLAGS.num_sentences))
-                    #print('word_att:',word_att)
-                    #print('sent_att:',sent_att)
+                    #func_log('word_att:',word_att)
+                    #func_log('sent_att:',sent_att)
                     label_to_explain = vocabulary_index2word_label[pred_label_index]
                     docs = docs + 'doc-' + str(n_doc) + '-' + str(start+x) + '-' + label_to_explain + ': ' + ' '.join(display_results_with_word_att_sent_att(evalX[start+x],vocabulary_index2word,word_att[x],sent_att[x],'ori')) + '\n'
                     #formatting: "doc - the nth doc to be presented - the kth doc in the who testing set - the label to explain"
@@ -1094,12 +1120,12 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
                     #top-3 tokens (weighted by sentences): score
                     
                 pred = 'prediction-0.5: ' + ' '.join(display_results(label_list_th,vocabulary_index2word_label))
-                #print('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
+                #func_log('prediction-topk:',*display_results(label_list_topk,vocabulary_index2word_label))
                 get_indexes = lambda x, xs: [i for (y, i) in zip(xs, range(len(xs))) if x == y]
                 label = 'labels: ' + ' '.join(display_results(get_indexes(1,evalY[start+x]),vocabulary_index2word_label))
                 prediction_str = prediction_str + '\n' + docs + pred + '\n' + label + '\n'
                 n_doc = n_doc + 1
-                #print(prediction_str)
+                #func_log(prediction_str)
     return prediction_str
     
 # display results with word-level attention weights and sentence-level attention weights
@@ -1107,8 +1133,8 @@ def display_for_qualitative_evaluation_per_label(sess,modelToEval,label_sim_mat,
 def display_results_with_word_att_sent_att(index_list,vocabulary_index2word_label,word_att,sent_att,att_note):
     label_list=[]
     count = 1
-    #print('word_att is an empty str? ', word_att == '') # for testing
-    #print('sent_att is an empty str? ', sent_att == '') # for testing                    
+    #func_log('word_att is an empty str? ', word_att == '') # for testing
+    #func_log('sent_att is an empty str? ', sent_att == '') # for testing                    
     for index in index_list:
         if index!=0: # this ensures that the padded values not being displayed.
             label=vocabulary_index2word_label[index]
@@ -1116,7 +1142,7 @@ def display_results_with_word_att_sent_att(index_list,vocabulary_index2word_labe
             if word_att != '': #FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
                 label_list.append(label + '(' + str(round(word_att[count-1],3)) + ')')
             else:
-                print('word_att as empty:',word_att)
+                func_log('word_att as empty:',word_att)
                 label_list.append(label)
         if count % (FLAGS.sequence_length/FLAGS.num_sentences) == 0:
             sent_index = int(count / (FLAGS.sequence_length/FLAGS.num_sentences))
@@ -1158,7 +1184,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
                 label_embedding_2dlist[i] = embedding / float(np.linalg.norm(embedding) + 1e-6) # normalise to unit length
                 count_exist = count_exist + 1  # assign array to this word.
             else:  # no embedding for this word
-                print(label, 'embedding inexist')
+                func_log(label, 'embedding inexist')
                 label_embedding_2dlist[i] = np.random.uniform(-bound, bound, FLAGS.embed_size * 4); # dimensionality as the final hidden layer of the model, which is 4 times of the input embedding size.
                 count_not_exist = count_not_exist + 1  # init a random value for the word.
         label_embedding_final = np.array(label_embedding_2dlist)  # covert to 2d array.
@@ -1167,12 +1193,12 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
         list_topk_label_lists = get_k_similar_label(label_embedding_final,list_query_labels,vocabulary_index2word_label,vocabulary_word2index_label,k)
         for query_label, topk_label_list in zip(list_query_labels,list_topk_label_lists):
             sim_list_output = sim_list_output + query_label + ":" + str(topk_label_list) + '\n'
-        print(list_topk_label_lists)
+        func_log(list_topk_label_lists)
         
         #3. plot 2D tsne scatter figure (not for the full label setting)
         if num_labels <= 50:
             code_emb_norm_2D = TSNE(n_components=2, init='pca', random_state=100).fit_transform(label_embedding_final)
-            print(code_emb_norm_2D)
+            func_log(code_emb_norm_2D)
             plt.scatter(code_emb_norm_2D[:,0],code_emb_norm_2D[:,1])
             
             for i in range(num_labels):
@@ -1206,7 +1232,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
                     label_embedding_2dlist[i] = embedding / float(np.linalg.norm(embedding) + 1e-6) # normalise to unit length
                     count_exist = count_exist + 1  # assign array to this word.
                 else:  # no embedding for this word
-                    print(label, 'embedding inexist')
+                    func_log(label, 'embedding inexist')
                     label_embedding_2dlist[i] = np.random.uniform(-bound, bound, FLAGS.embed_size * 4); # dimensionality as the final hidden layer of the model, which is 4 times of the input embedding size.
                     count_not_exist = count_not_exist + 1  # init a random value for the word.
             label_embedding_final = np.array(label_embedding_2dlist)  # covert to 2d array.
@@ -1215,12 +1241,12 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
             list_topk_label_lists = get_k_similar_label(label_embedding_final,list_query_labels,vocabulary_index2word_label,vocabulary_word2index_label,k)
             for query_label, topk_label_list in zip(list_query_labels,list_topk_label_lists):
                 sim_list_output = sim_list_output + query_label + ":" + str(topk_label_list) + '\n'
-            print(list_topk_label_lists)
+            func_log(list_topk_label_lists)
             
             #3. plot 2D tsne scatter figure (not for the full label setting)
             if num_labels <= 50:
                 code_emb_norm_2D = TSNE(n_components=2, init='pca', random_state=100).fit_transform(label_embedding_final)
-                print(code_emb_norm_2D)
+                func_log(code_emb_norm_2D)
                 plt.scatter(code_emb_norm_2D[:,0],code_emb_norm_2D[:,1])
                 
                 for i in range(num_labels):
@@ -1245,15 +1271,15 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
     W_projection = sess.run(model.W_projection)
     
     W_projection_tp = np.transpose(W_projection)
-    print('W_projection_tp:', W_projection_tp.shape, W_projection_tp[0,0:5])
+    func_log('W_projection_tp:', W_projection_tp.shape, W_projection_tp[0,0:5])
     
     #2. print top-k similar labels to a query label
     w_project_norm = W_projection_tp/np.linalg.norm(W_projection_tp,axis=1)[:,None]
-    #print(get_k_similar_label(LE_learned,list_query_labels,dicts,k))
+    #func_log(get_k_similar_label(LE_learned,list_query_labels,dicts,k))
     list_topk_label_lists = get_k_similar_label(w_project_norm,list_query_labels,vocabulary_index2word_label,vocabulary_word2index_label,k)
     for query_label, topk_label_list in zip(list_query_labels,list_topk_label_lists):
         sim_list_output = sim_list_output + query_label + ":" + str(topk_label_list) + '\n'
-    print(list_topk_label_lists)
+    func_log(list_topk_label_lists)
     
     #2.5 output the topk labels to a file
     output_to_file(sim_list_filename,sim_list_output)
@@ -1261,7 +1287,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
     #3. plot 2D tsne scatter figure (not for the full label setting)
     if num_labels <= 50:
         LE_learned_2D = TSNE(n_components=2, init='pca', random_state=100).fit_transform(w_project_norm)
-        print(LE_learned_2D)
+        func_log(LE_learned_2D)
         plt.scatter(LE_learned_2D[:,0],LE_learned_2D[:,1])
         
         for i in range(num_labels):
@@ -1283,7 +1309,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
             list_topk_label_lists = get_k_similar_label(lw_att_word_lvl_context_norm,list_query_labels,vocabulary_index2word_label,vocabulary_word2index_label,k)
             for query_label, topk_label_list in zip(list_query_labels,list_topk_label_lists):
                 sim_list_output = sim_list_output + query_label + ":" + str(topk_label_list) + '\n'
-            print(list_topk_label_lists)
+            func_log(list_topk_label_lists)
             
             #2.5 output the topk labels to a file
             output_to_file(sim_list_filename,sim_list_output)
@@ -1291,7 +1317,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
             #3. plot 2D tsne scatter figure (not for the full label setting)
             if num_labels <= 50:
                 lw_att_context_norm_2D = TSNE(n_components=2, init='pca', random_state=100).fit_transform(lw_att_word_lvl_context_norm)
-                print(LE_learned_2D)
+                func_log(LE_learned_2D)
                 plt.scatter(lw_att_context_norm_2D[:,0],lw_att_context_norm_2D[:,1])
                 
                 for i in range(num_labels):
@@ -1309,7 +1335,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
         list_topk_label_lists = get_k_similar_label(lw_att_sent_lvl_context_norm,list_query_labels,vocabulary_index2word_label,vocabulary_word2index_label,k)
         for query_label, topk_label_list in zip(list_query_labels,list_topk_label_lists):
             sim_list_output = sim_list_output + query_label + ":" + str(topk_label_list) + '\n'
-        print(list_topk_label_lists)
+        func_log(list_topk_label_lists)
         
         #2.5 output the topk labels to a file
         output_to_file(sim_list_filename,sim_list_output)
@@ -1317,7 +1343,7 @@ def viz_le(sess,model,vocabulary_index2word_label,vocabulary_word2index_label,li
         #3. plot 2D tsne scatter figure (not for the full label setting)
         if num_labels <= 50:
             lw_att_context_norm_2D = TSNE(n_components=2, init='pca', random_state=100).fit_transform(lw_att_sent_lvl_context_norm)
-            print(LE_learned_2D)
+            func_log(LE_learned_2D)
             plt.scatter(lw_att_context_norm_2D[:,0],lw_att_context_norm_2D[:,1])
             
             for i in range(num_labels):
@@ -1357,7 +1383,7 @@ def show_per_label_results(vocabulary_index2word_label,prec_per_label,rec_per_la
     
 #get label using logits
 def get_label_using_logits(logits,vocabulary_index2word_label,top_number=1):
-    #print("get_label_using_logits.logits:",logits) #1-d array: array([-5.69036102, -8.54903221, -5.63954401, ..., -5.83969498,-5.84496021, -6.13911009], dtype=float32))
+    #func_log("get_label_using_logits.logits:",logits) #1-d array: array([-5.69036102, -8.54903221, -5.63954401, ..., -5.83969498,-5.84496021, -6.13911009], dtype=float32))
     index_list=np.argsort(logits)[-top_number:]
     index_list=index_list[::-1]
     #label_list=[]
@@ -1395,13 +1421,13 @@ def sigmoid_array(x):
 def calculate_accuracy(labels_predicted,labels,eval_counter): # this should be same as the recall value
     # turn the multihot representation to a list of true labels
     label_nozero=[]
-    #print("labels:",labels)
+    #func_log("labels:",labels)
     labels=list(labels)
     for index,label in enumerate(labels):
         if label>0:
             label_nozero.append(index)
     #if eval_counter<2:
-        #print("labels_predicted:",labels_predicted," ;labels_nozero:",label_nozero)
+        #func_log("labels_predicted:",labels_predicted," ;labels_nozero:",label_nozero)
     overlapping = 0
     label_dict = {x: x for x in label_nozero} # create a dictionary of labels for the true labels
     union = len(label_dict)
@@ -1415,13 +1441,13 @@ def calculate_accuracy(labels_predicted,labels,eval_counter): # this should be s
 
 def calculate_precision_recall(labels_predicted, labels,eval_counter):
     label_nozero=[]
-    #print("labels:",labels)
+    #func_log("labels:",labels)
     labels=list(labels)
     for index,label in enumerate(labels):
         if label>0:
             label_nozero.append(index)
     #if eval_counter<2:
-    #    print("labels_predicted:",labels_predicted," ;labels_nozero:",label_nozero)
+    #    func_log("labels_predicted:",labels_predicted," ;labels_nozero:",label_nozero)
     count = 0
     label_dict = {x: x for x in label_nozero}
     for label_predict in labels_predicted:
@@ -1434,13 +1460,13 @@ def calculate_precision_recall(labels_predicted, labels,eval_counter):
         precision = count / len(labels_predicted)
     recall = count / len(label_nozero)
     #fmeasure = 2*precision*recall/(precision+recall)
-    #print(count, len(label_nozero))
+    #func_log(count, len(label_nozero))
     return precision, recall
    
 # calculate the symmetric_difference
 def calculate_hamming_loss(labels_predicted, labels):
     label_nozero=[]
-    #print("labels:",labels)
+    #func_log("labels:",labels)
     labels=list(labels)
     for index,label in enumerate(labels):
         if label>0:
@@ -1569,7 +1595,7 @@ def check_code_type(ICD9_code):
 #        with_min_max (optional), default False, by setting this True, further displays the minimum and maximum of all the folds or runs
 # output: a string or a list of strings as mean±std. For 1D list of scalar input, the output is a single string; for a 1D list of one-dimensional np.ndarray input, the output is a list of j elements, where j is the dimension of the second axis (axis=1) of the input.
 def cal_ave_std(list_result_runs, with_min_max=False):
-    #list_result_runs is a list of 0-dimensional or 1-dimensional np.ndarrays #print(type(list_result_runs), list_result_runs[0],type(list_result_runs[0]))
+    #list_result_runs is a list of 0-dimensional or 1-dimensional np.ndarrays #func_log(type(list_result_runs), list_result_runs[0],type(list_result_runs[0]))
     if np.ndim(list_result_runs[0]) == 1: # if being at least a list of one-dimensional np.ndarray
         if with_min_max:
             return ['%.3f ± %.3f (%.3f - %.3f)' % (results_mean, results_std, results_min, results_max) for results_mean,results_std,results_min, results_max in zip(np.mean(list_result_runs,axis=0), np.std(list_result_runs,axis=0), np.amin(list_result_runs,axis=0), np.amax(list_result_runs,axis=0))]
@@ -1577,7 +1603,7 @@ def cal_ave_std(list_result_runs, with_min_max=False):
             return ['%.3f ± %.3f' % (results_mean, results_std) for results_mean,results_std in zip(np.mean(list_result_runs,axis=0), np.std(list_result_runs,axis=0))]
     else: # if 1D list # if isinstance(list_result_runs[0], float)
         assert np.ndim(list_result_runs[0]) == 0 # the element in the list is a scalar
-        #print(np.mean(list_result_runs,axis=0), type(np.mean(list_result_runs,axis=0)))
+        #func_log(np.mean(list_result_runs,axis=0), type(np.mean(list_result_runs,axis=0)))
         if with_min_max:
             return '%.3f ± %.3f (%.3f - %.3f)' % (np.mean(list_result_runs,axis=0), np.std(list_result_runs,axis=0), np.amin(list_result_runs,axis=0), np.amax(list_result_runs,axis=0))
         else:
@@ -1585,3 +1611,4 @@ def cal_ave_std(list_result_runs, with_min_max=False):
        
 if __name__ == "__main__":
     tf.app.run()
+    func_log('end')

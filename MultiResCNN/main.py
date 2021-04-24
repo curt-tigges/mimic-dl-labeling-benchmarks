@@ -56,14 +56,14 @@ if __name__ == "__main__":
         prepare_instance_func = prepare_instance
 
     train_instances = prepare_instance_func(dicts, args.data_path, args, args.MAX_LENGTH)
-    print("train_instances {}".format(len(train_instances)))
+    func_log("train_instances {}".format(len(train_instances)))
     if args.version != 'mimic2':
         dev_instances = prepare_instance_func(dicts, args.data_path.replace('train','dev'), args, args.MAX_LENGTH)
-        print("dev_instances {}".format(len(dev_instances)))
+        func_log("dev_instances {}".format(len(dev_instances)))
     else:
         dev_instances = None
     test_instances = prepare_instance_func(dicts, args.data_path.replace('train','test'), args, args.MAX_LENGTH)
-    print("test_instances {}".format(len(test_instances)))
+    func_log("test_instances {}".format(len(test_instances)))
 
     if args.model.find("bert") != -1:
         collate_func = my_collate_bert
@@ -110,7 +110,7 @@ if __name__ == "__main__":
             losses = train(args, model, optimizer, epoch, args.gpu, train_loader)
             loss = np.mean(losses)
             epoch_finish = time.time()
-            print("epoch finish in %.2fs, loss: %.4f" % (epoch_finish - epoch_start, loss))
+            func_log("epoch finish in %.2fs, loss: %.4f" % (epoch_finish - epoch_start, loss))
         else:
             loss = np.nan
 
@@ -118,14 +118,14 @@ if __name__ == "__main__":
         dev_instances = test_instances if args.version == 'mimic2' else dev_instances
         dev_loader = test_loader if args.version == 'mimic2' else dev_loader
         if epoch == args.n_epochs - 1:
-            print("last epoch: testing on dev and test sets")
+            func_log("last epoch: testing on dev and test sets")
             test_only = True
 
         # test on dev
         evaluation_start = time.time()
         metrics = test(args, model, args.data_path, fold, args.gpu, dicts, dev_loader)
         evaluation_finish = time.time()
-        print("evaluation finish in %.2fs" % (evaluation_finish - evaluation_start))
+        func_log("evaluation finish in %.2fs" % (evaluation_finish - evaluation_start))
         if test_only or epoch == args.n_epochs - 1:
             metrics_te = test(args, model, args.data_path, "test", args.gpu, dicts, test_loader)
         else:
