@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch.nn.init import xavier_uniform_ as xavier_uniform
 from elmo.elmo import Elmo
 import json
-from utils import build_pretrain_embedding, load_embeddings
+from utils import build_pretrain_embedding, load_embeddings, device, func_log
 from math import floor
 
 class WordRep(nn.Module):
@@ -350,5 +350,8 @@ def pick_model(args, dicts):
         sd = torch.load(args.test_model)
         model.load_state_dict(sd)
     if args.gpu >= 0:
-        model.cuda(args.gpu)
+        # model.cuda(args.gpu)
+        func_log("Let's use ", torch.cuda.device_count(), " GPUs!")
+        model = torch.nn.DataParallel(model)
+        model.to(device)
     return model

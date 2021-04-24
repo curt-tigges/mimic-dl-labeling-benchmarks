@@ -8,6 +8,8 @@ import gensim.models.fasttext as fasttext
 import codecs
 import re
 import time
+from torch import cuda
+device = 'cuda' if cuda.is_available() else 'cpu'
 
 def gensim_to_embeddings(wv_file, vocab_file, Y, outfile=None):
     model = gensim.models.Word2Vec.load(wv_file)
