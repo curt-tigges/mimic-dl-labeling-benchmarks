@@ -102,6 +102,7 @@ if version == "mimic3" and Y == "full":
 
 k = [5] if Y == 50 else [8,15]
 print("evaluating all other metrics")
+print("yhat_raw=", yhat_raw)
 metrics = evaluation.all_metrics(yhat, y, k=k, yhat_raw=yhat_raw)
 
 evaluation.print_metrics(metrics)
