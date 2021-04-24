@@ -381,29 +381,6 @@ for epoch in range(EPOCHS):
     print(f"AUC Score (Micro) = {auc_score_micro}")
     print(f"AUC Score (Macro) = {auc_score_macro}")
 
-    # %%
-
-    outputs, targets = validation(epoch)
-    outputs = np.array(outputs) >= 0.5
-    accuracy = metrics.accuracy_score(targets, outputs)
-    precision_score_micro = metrics.precision_score(targets, outputs, average='micro')
-    precision_score_macro = metrics.precision_score(targets, outputs, average='macro')
-    recall_score_micro = metrics.recall_score(targets, outputs, average='micro')
-    recall_score_macro = metrics.recall_score(targets, outputs, average='macro')
-    f1_score_micro = metrics.f1_score(targets, outputs, average='micro')
-    f1_score_macro = metrics.f1_score(targets, outputs, average='macro')
-    auc_score_micro = metrics.roc_auc_score(targets, outputs, average='micro')
-    auc_score_macro = metrics.roc_auc_score(targets, outputs, average='macro')
-    print(f"Accuracy Score = {accuracy}")
-    print(f"Precision Score (Micro) = {precision_score_micro}")
-    print(f"Precision Score (Macro) = {precision_score_macro}")
-    print(f"Recall Score (Micro) = {recall_score_micro}")
-    print(f"Recall Score (Macro) = {recall_score_macro}")
-    print(f"F1 Score (Micro) = {f1_score_micro}")
-    print(f"F1 Score (Macro) = {f1_score_macro}")
-    print(f"AUC Score (Micro) = {auc_score_micro}")
-    print(f"AUC Score (Macro) = {auc_score_macro}")
-
 # %%
 
 torch.save(model.state_dict(), "bluebert_state_dict_model.pt")

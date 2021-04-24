@@ -7,6 +7,7 @@ import gensim.models.word2vec as w2v
 import gensim.models.fasttext as fasttext
 import codecs
 import re
+import time
 
 def gensim_to_embeddings(wv_file, vocab_file, Y, outfile=None):
     model = gensim.models.Word2Vec.load(wv_file)
@@ -1018,3 +1019,9 @@ def build_pretrain_embedding(embedding_path, word_alphabet, norm):
                    lowercase_and_digits_replaced_with_zeros_found*100.0/len(word_alphabet), not_match*100.0/len(word_alphabet)))
 
     return pretrain_emb, embedd_dim
+
+start_time = time.time()
+def func_log(msg):
+    cur = time.strftime("%Y-%m-%d %H:%M:%S")
+    elapsed = time.time() - start_time
+    print("{} ({:.3f}): {}".format(cur, elapsed, msg))

@@ -5,7 +5,7 @@ from utils import all_metrics, print_metrics
 
 def train(args, model, optimizer, epoch, gpu, data_loader):
 
-    print("EPOCH %d" % epoch)
+    func_log("EPOCH %d" % epoch)
 
     losses = []
 

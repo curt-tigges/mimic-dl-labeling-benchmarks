@@ -6,7 +6,7 @@ import torch
 import csv
 import sys
 from utils import load_lookups, prepare_instance, prepare_instance_bert, MyDataset, my_collate, my_collate_bert, \
-    early_stop, save_everything
+    early_stop, save_everything, func_log
 from models import pick_model
 import torch.optim as optim
 from collections import defaultdict
@@ -15,6 +15,8 @@ import os
 import time
 from train_test import train, test
 from pytorch_pretrained_bert import BertAdam
+
+func_log("start")
 
 if __name__ == "__main__":
 
@@ -154,5 +156,5 @@ if __name__ == "__main__":
                 args.test_model = '%s/model_best_%s.pth' % (model_dir, args.criterion)
                 model = pick_model(args, dicts)
 
-
+    func_log("end")
 

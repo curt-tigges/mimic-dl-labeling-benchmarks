@@ -5,12 +5,8 @@ import transformers
 import torch
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader, RandomSampler, SequentialSampler
-from transformers import BertTokenizer, BertModel, BertConfig
 from transformers import AutoTokenizer, AutoModel
-
 from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.preprocessing import LabelBinarizer
-import torch.nn as nn
 
 import time
 start_time = time.time()
@@ -22,61 +18,35 @@ def func_log(msg):
 
 func_log("start")
 
-
-# %%
-
 # Setting up the device for GPU usage
-
 from torch import cuda
-
 device = 'cuda' if cuda.is_available() else 'cpu'
 
-# %% md
-
 ## Load data
-
-# %%
-
 # change to where you store mimic3 data
 MIMIC_3_DIR = '/CS598-DLH/caml-mimic/mimicdata/mimic3'
-
 train_df = pd.read_csv('%s/train_50.csv' % MIMIC_3_DIR)
-
 train_df.head()
 
-
-# %% md
-
 ## Preprocess Data
-
-# %%
-
 # split labels by ";", then convert to list
 def split_lab(x):
     # print(x)
     return x.split(";")
 
-
 train_df['LABELS'] = train_df['LABELS'].apply(split_lab)
-
 train_df.head()
-
-# %%
 
 # check top 50 code
 top_50 = pd.read_csv('%s/TOP_50_CODES.csv' % MIMIC_3_DIR)
 
 top_50.head().values
 
-# %%
-
 # load multi label binarizer for one-hot encoding
 mlb = MultiLabelBinarizer(sparse_output=True)
 
 # labels_onehot = mlb.fit_transform(train_df.pop('LABELS'))
 # labels_onehot[0][1]
-
-# %%
 
 # change label to one-hot encoding per code
 train_df = train_df.join(
@@ -87,33 +57,20 @@ train_df = train_df.join(
 
 train_df.head()
 
-# %%
-
 # Convert columns to list of one hot encoding
 icd_classes_50 = mlb.classes_
-
 train_df['labels'] = train_df[icd_classes_50].values.tolist()
-
 train_df.head()
-
-# %%
 
 # check if one-hot encoding is correct
 len(train_df.labels[0])
-
-# %%
 
 # convert into 2 columns dataframe
 train_df = pd.DataFrame(train_df, columns=['TEXT', 'labels'])
 train_df.columns = ['text', 'labels']
 train_df.head()
 
-# %% md
-
 ### Prepare Eval data
-
-# %%
-
 # same as train data preparation, but for evaluation
 eval_df = pd.read_csv('%s/dev_50.csv' % MIMIC_3_DIR)
 
@@ -131,8 +88,6 @@ eval_df.columns = ['text', 'labels']
 
 print(len(eval_df.labels[0]))
 eval_df.describe
-
-# %%
 
 # same as train data preparation, but for evaluation
 test_df = pd.read_csv('%s/test_50.csv' % MIMIC_3_DIR)
@@ -152,12 +107,7 @@ test_df.columns = ['text', 'labels']
 print(len(test_df.labels[0]))
 test_df.describe
 
-# %% md
-
 ### Set Model Parameters
-
-# %%
-
 # Defining some key variables to configure model training
 MAX_LEN = 200
 TRAIN_BATCH_SIZE = 8
@@ -168,13 +118,7 @@ LEARNING_RATE = 1e-05
 # set tokenizer
 tokenizer = AutoTokenizer.from_pretrained("emilyalsentzer/Bio_Discharge_Summary_BERT")
 
-
-# %% md
-
 ### Preparing Dataloader
-
-# %%
-
 # custom dataset for BERT class
 class CustomDataset(Dataset):
 
@@ -215,11 +159,7 @@ class CustomDataset(Dataset):
             'targets': torch.tensor(self.targets[index], dtype=torch.float)
         }
 
-
-# %%
-
 # load df to dataset
-
 print("TRAIN Dataset: {}".format(train_df.shape))
 print("EVAL Dataset: {}".format(eval_df.shape))
 print("TEST Dataset: {}".format(test_df.shape))
@@ -227,8 +167,6 @@ print("TEST Dataset: {}".format(test_df.shape))
 training_set = CustomDataset(train_df, tokenizer, MAX_LEN)
 evaluation_set = CustomDataset(eval_df, tokenizer, MAX_LEN)
 testing_set = CustomDataset(test_df, tokenizer, MAX_LEN)
-
-# %%
 
 # data loader
 train_params = {'batch_size': TRAIN_BATCH_SIZE,
@@ -250,29 +188,18 @@ training_loader = DataLoader(training_set, **train_params)
 evaluation_loader = DataLoader(evaluation_set, **train_params)
 testing_loader = DataLoader(testing_set, **test_params)
 
-
-# %% md
-
 ### Create model class from pretrained model
-
-# %%
-
 # Creating the customized model, by adding a drop out and a dense layer on top of distil bert to get the final output for the model.
-
 class BERTClass(torch.nn.Module):
     def __init__(self):
         super(BERTClass, self).__init__()
         '''
             Load Pretrained model here
             Use return_dict=False for compatibility for 4.x
-
         '''
         self.l1 = transformers.AutoModel.from_pretrained("emilyalsentzer/Bio_Discharge_Summary_BERT",
                                                          return_dict=False)
-        # self.l1 = transformers.BertModel.from_pretrained('bert-base-uncased', return_dict=False)
-
         self.l2 = torch.nn.Dropout(0.3)
-
         '''
             Changed Linear Output layer to 50 based on the class
         '''
@@ -289,25 +216,14 @@ model = BERTClass()
 model.to(device)
 model = torch.nn.DataParallel(model)
 
-# %%
-
 # loss function
 def loss_fn(outputs, targets):
     return torch.nn.BCEWithLogitsLoss()(outputs, targets)
 
-
-# %%
-
 # optimizer
 optimizer = torch.optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
 
-
-# %% md
-
 ### Train fine-tuning model
-
-# %%
-
 def train(epoch):
     model.train()
     for _, data in enumerate(training_loader, 0):
@@ -327,21 +243,12 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-
-# %%
-
 for epoch in tqdm(range(EPOCHS)):
     train(epoch)
 
 
-# %% md
-
 ### Model Evaluation
-
-# %%
-
 # Evaluate the model
-
 def validation(epoch):
     model.eval()
     fin_targets = []
@@ -357,8 +264,6 @@ def validation(epoch):
             fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())
     return fin_outputs, fin_targets
 
-
-# %%
 
 for epoch in range(EPOCHS):
     outputs, targets = validation(epoch)
@@ -382,37 +287,7 @@ for epoch in range(EPOCHS):
     print(f"AUC Score (Micro) = {auc_score_micro}")
     print(f"AUC Score (Macro) = {auc_score_macro}")
 
-    # %%
-
-    outputs, targets = validation(epoch)
-    outputs = np.array(outputs) >= 0.5
-    accuracy = metrics.accuracy_score(targets, outputs)
-    precision_score_micro = metrics.precision_score(targets, outputs, average='micro')
-    precision_score_macro = metrics.precision_score(targets, outputs, average='macro')
-    recall_score_micro = metrics.recall_score(targets, outputs, average='micro')
-    recall_score_macro = metrics.recall_score(targets, outputs, average='macro')
-    f1_score_micro = metrics.f1_score(targets, outputs, average='micro')
-    f1_score_macro = metrics.f1_score(targets, outputs, average='macro')
-    auc_score_micro = metrics.roc_auc_score(targets, outputs, average='micro')
-    auc_score_macro = metrics.roc_auc_score(targets, outputs, average='macro')
-    print(f"Accuracy Score = {accuracy}")
-    print(f"Precision Score (Micro) = {precision_score_micro}")
-    print(f"Precision Score (Macro) = {precision_score_macro}")
-    print(f"Recall Score (Micro) = {recall_score_micro}")
-    print(f"Recall Score (Macro) = {recall_score_macro}")
-    print(f"F1 Score (Micro) = {f1_score_micro}")
-    print(f"F1 Score (Macro) = {f1_score_macro}")
-    print(f"AUC Score (Micro) = {auc_score_micro}")
-    print(f"AUC Score (Macro) = {auc_score_macro}")
-
-# %%
-
-torch.save(model.state_dict(), "bluebert_state_dict_model.pt")
-
-# %%
-
-torch.save(model, "bluebert_model.pt")
-
-# %%
+torch.save(model.state_dict(), "clinical_bert_model_dict.pt")
+torch.save(model, "clinical_bert_model.pt")
 
 func_log("end")
