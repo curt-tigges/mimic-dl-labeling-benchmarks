@@ -5,6 +5,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from transformers import AdamW, get_linear_schedule_with_warmup
 from transformers import AutoModel
+from mimic_constants import *
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
