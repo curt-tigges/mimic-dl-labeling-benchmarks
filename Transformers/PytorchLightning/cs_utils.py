@@ -40,8 +40,18 @@ logger = logging.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
+logger.info('========================================================')
 logger.info('start')
-atexit.register(lambda *args: logging.info("end"))
+logger.info('========================================================')
+
+
+def goodbye():
+    logger.info('========================================================')
+    logging.info("end")
+    logger.info('========================================================')
+
+
+atexit.register(goodbye)
 
 
 def load_pickle(filename):
