@@ -22,7 +22,7 @@ logger.info('load data end')
 
 
 ############################################
-# 2.1 Encoding label
+# 2 Encoding label
 ############################################
 mlb = MultiLabelBinarizer()
 y_tr = mlb.fit_transform(train_df['LABELS'])  # y tag(label)
@@ -31,18 +31,6 @@ y_test = mlb.fit_transform(test_df['LABELS'])  # y tag(label)
 
 logger.info(mlb.classes_)
 logger.info('label encoding end')
-
-
-############################################
-# 2.2 Check the length of Clinical Notes
-############################################
-# word_cnt = train_df.pop('length')
-# plt.figure(figsize=[8, 5])
-# plt.hist(word_cnt, bins=40)
-# plt.xlabel('Word Count/Clinical Note')
-# plt.ylabel('# of Occurences')
-# plt.title("Frequency of Word Counts/Clinical Note")
-# plt.show()
 
 
 ############################################
@@ -75,7 +63,7 @@ checkpoint_callback = ModelCheckpoint(
 )
 
 early_stop_callback = EarlyStopping(
-   monitor='val_accuracy',
+   monitor='val_loss',
    min_delta=0.00,
    patience=2,
    verbose=False,

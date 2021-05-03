@@ -1,5 +1,6 @@
 import pandas as pd
 from transformers import BertTokenizer
+import matplotlib.pyplot as plt
 
 from mimic_constants import *
 from cs_utils import *
@@ -9,15 +10,28 @@ from cs_utils import *
 ############################################
 train_df = pd.read_csv('%s/train_50.csv' % MIMIC_3_DIR)
 train_df['LABELS'] = train_df['LABELS'].apply(lambda x: x.split(';'))
-train_df.to_pickle(TRAIN_PICKLE)
 
 eval_df = pd.read_csv('%s/dev_50.csv' % MIMIC_3_DIR)
 eval_df['LABELS'] = eval_df['LABELS'].apply(lambda x: x.split(';'))
-eval_df.to_pickle(DEV_PICKLE)
 
 test_df = pd.read_csv('%s/test_50.csv' % MIMIC_3_DIR)
 test_df['LABELS'] = test_df['LABELS'].apply(lambda x: x.split(';'))
+
+train_df.to_pickle(TRAIN_PICKLE)
+eval_df.to_pickle(DEV_PICKLE)
 test_df.to_pickle(TEST_PICKLE)
+
+############################################
+# 2.2 Check the length of Clinical Notes
+############################################
+word_cnt = train_df.pop('length')
+plt.figure(figsize=[8, 5])
+plt.hist(word_cnt, bins=40)
+plt.xlabel('Word Count/Clinical Note')
+plt.ylabel('# of Occurences')
+plt.title("Frequency of Word Counts/Clinical Note")
+plt.show()
+
 
 ############################################
 # Pickling test data's BERT input
