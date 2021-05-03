@@ -15,14 +15,15 @@ with open(BEST_MODEL_INFO_PATH, 'r') as f:
 
 ############################################
 # 5. Find best threshold
-############################################logger.info("Best threshold pick start")
+############################################
+logger.info("Best threshold pick start")
 
-# Tokenize all questions in x_test
-input_ids = []
-attention_masks = []
+# Tokenize all texts in x_test
+input_ids = load_pickle(PICKLE_TEST_INPUT_IDS)
+attention_masks = load_pickle(PICKLE_TEST_ATTENTION_MASKS)
 
-train_df = load_pickle('{}/train.pkl'.format(MIMIC_3_DIR))
-test_df = load_pickle('{}/test.pkl'.format(MIMIC_3_DIR))
+train_df = load_pickle('./train.pkl')
+test_df = load_pickle('./test.pkl')
 
 x_tr = train_df['TEXT']
 x_test = test_df['TEXT']
@@ -42,28 +43,8 @@ if FOR_LOCAL_TEST:
     x_test = x_test[0:2]
     y_test = y_test[0:2]
 
-input_ids = []
-attention_masks = []
 
 logger.info('Setup test dataset for BERT start')
-for quest in x_test:
-    encoded_quest = Bert_tokenizer.encode_plus(
-        quest,
-        None,
-        add_special_tokens=True,
-        max_length=MAX_LEN,
-        padding='max_length',
-        return_token_type_ids=False,
-        return_attention_mask=True,
-        truncation=True,
-        return_tensors='pt'
-    )
-
-    # Add the input_ids from encoded question to the list.
-    input_ids.append(encoded_quest['input_ids'])
-    # Add its attention mask
-    attention_masks.append(encoded_quest['attention_mask'])
-
 # Now convert the lists into tensors.
 input_ids = torch.cat(input_ids, dim=0)
 attention_masks = torch.cat(attention_masks, dim=0)
@@ -110,6 +91,12 @@ for batch in pred_dataloader:
         label_ids = b_labels.to('cpu').numpy()
     pred_outs.append(pred_out)
     true_labels.append(label_ids)
+
+with open(TEST_PREDICT_OUTS, 'w') as f:
+    pickle.dump(pred_outs, f)
+
+with open(TEST_TRUE_LABELS, 'w') as f:
+    pickle.dump(true_labels, f)
 
 # Combine the results across all batches.
 flat_pred_outs = np.concatenate(pred_outs, axis=0)

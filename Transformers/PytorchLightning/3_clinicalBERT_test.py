@@ -5,20 +5,56 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from cs_utils import *
 from mimic_constants import *
 from mimic_evaluation import *
+from mimic_models import *
 from mimic_utils import *
 
-with open(BEST_THRESHOLD_INFO_PATH, 'w') as f:
-    opt_thresh = float(f.readline().strip())
+############################################
+# Prepare testing
+############################################
+with open(BEST_MODEL_INFO_PATH, 'r') as f:
+    best_model_path = f.readline().strip()
+    logger.info('Best model checkpoint path: {}'.format(best_model_path.strip()))
 
-test_df = load_pickle('{}/test.pkl'.format(MIMIC_3_DIR))
+with open(BEST_THRESHOLD_INFO_PATH, 'r') as f:
+    opt_thresh = float(f.readline().strip())
+    logger.info('Optimal threshold: {}'.format(opt_thresh))
+
+# Put model in evaluation mode
+logger.info('Load trained model start')
+model = MimicClassifier.load_from_checkpoint(checkpoint_path=best_model_path)
+model = model.to(device)
+model.eval()
+logger.info('Load trained model end')
+
+test_df = load_pickle('./test.pkl')
 x_test = test_df['TEXT']
 
 mlb = MultiLabelBinarizer()
 y_test = mlb.fit_transform(test_df['LABELS'])  # y tag(label)
 
+input_ids = load_pickle(PICKLE_TEST_INPUT_IDS)
+attention_masks = load_pickle(PICKLE_TEST_ATTENTION_MASKS)
+
 ############################################
 # 6. Metrics Report (Top 100)
 ############################################
+# Prediction on test set
+flat_pred_outs = 0
+flat_true_labels = 0
+
+# Tracking variables
+pred_outs = load_pickle(TEST_PREDICT_OUTS)
+true_labels = load_pickle(TEST_TRUE_LABELS)
+
+# Combine the results across all batches.
+flat_pred_outs = np.concatenate(pred_outs, axis=0)
+
+# Combine the correct labels for each batch into a single list.
+flat_true_labels = np.concatenate(true_labels, axis=0)
+
+# convert labels to 1D array
+y_true = flat_true_labels.ravel()
+
 y_pred_labels = classify(flat_pred_outs, opt_thresh)
 y_pred = np.array(y_pred_labels).ravel()  # Flatten
 

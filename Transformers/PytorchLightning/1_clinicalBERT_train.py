@@ -9,9 +9,9 @@ from cs_utils import *
 ############################################
 # 1. Load & Pre-process the data
 ############################################
-train_df = load_pickle('{}/train.pkl'.format(MIMIC_3_DIR))
-eval_df = load_pickle('{}/dev.pkl'.format(MIMIC_3_DIR))
-test_df = load_pickle('{}/test.pkl'.format(MIMIC_3_DIR))
+train_df = load_pickle('./train.pkl')
+eval_df = load_pickle('./dev.pkl')
+test_df = load_pickle('./test.pkl')
 
 x_tr = train_df['TEXT']
 x_val = eval_df['TEXT']
