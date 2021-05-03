@@ -7,6 +7,8 @@ from mimic_evaluation import *
 from mimic_models import *
 from mimic_utils import *
 
+logger.info('Start: '.format(__file__))
+
 ############################################
 # Prepare testing
 ############################################
