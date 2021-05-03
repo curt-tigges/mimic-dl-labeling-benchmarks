@@ -1,6 +1,6 @@
 import pandas as pd
 
-from clinicalBERT_common import *
+from mimic_constants import *
 
 train_df = pd.read_csv('%s/train_50.csv' % MIMIC_3_DIR)
 train_df['LABELS'] = train_df['LABELS'].apply(lambda x: x.split(';'))
