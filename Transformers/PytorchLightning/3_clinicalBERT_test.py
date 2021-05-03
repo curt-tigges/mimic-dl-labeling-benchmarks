@@ -8,7 +8,7 @@ from mimic_evaluation import *
 from mimic_utils import *
 
 with open(BEST_THRESHOLD_INFO_PATH, 'w') as f:
-    opt_thresh = float(f.read())
+    opt_thresh = float(f.readline().strip())
 
 test_df = load_pickle('{}/test.pkl'.format(MIMIC_3_DIR))
 x_test = test_df['TEXT']

@@ -2,8 +2,8 @@ import numpy as np
 import torch
 
 MIMIC_3_DIR = '/CS598-DLH/caml-mimic/mimicdata/mimic3'
-BEST_MODEL_INFO_PATH = './1_best_model.txt'
-BEST_THRESHOLD_INFO_PATH = './2_best_threshold.txt'
+BEST_MODEL_INFO_PATH = './best_model.txt'
+BEST_THRESHOLD_INFO_PATH = './best_threshold.txt'
 
 FOR_LOCAL_TEST = False
 

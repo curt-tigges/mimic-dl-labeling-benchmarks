@@ -9,10 +9,13 @@ from mimic_constants import *
 from mimic_models import *
 from mimic_utils import *
 
+with open(BEST_MODEL_INFO_PATH, 'r') as f:
+    best_model_path = f.readline().strip()
+    logger.info('Best model checkpoint path: {}'.format(best_model_path.strip()))
+
 ############################################
 # 5. Find best threshold
-############################################
-logger.info("Best threshold pick start")
+############################################logger.info("Best threshold pick start")
 
 # Tokenize all questions in x_test
 input_ids = []
@@ -82,9 +85,6 @@ flat_true_labels = 0
 
 # Put model in evaluation mode
 logger.info('Load trained model start')
-with open(BEST_MODEL_INFO_PATH, 'r') as f:
-    best_model_path = f.readline()
-    logger.info('Best model checkpoint path: {}'.format(best_model_path))
 model = MimicClassifier.load_from_checkpoint(checkpoint_path=best_model_path)
 model = model.to(device)
 model.eval()
