@@ -136,7 +136,8 @@ for thresh in threshold:
     scores.append(metrics.f1_score(y_true, y_pred))
 
 opt_thresh = threshold[scores.index(max(scores))]
+opt_thresh = round(opt_thresh, 2)  # 0.22000000000000003 => 0.22
 logger.info(f'Optimal Threshold Value = {opt_thresh}')
 
 with open(BEST_THRESHOLD_INFO_PATH, 'w') as f:
-    f.write(opt_thresh)
+    f.write(str(opt_thresh))
