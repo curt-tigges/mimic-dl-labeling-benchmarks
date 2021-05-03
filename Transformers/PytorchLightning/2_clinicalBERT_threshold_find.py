@@ -8,7 +8,7 @@ from cs_utils import *
 from mimic_models import *
 from mimic_utils import *
 
-logger.info('Start: '.format(__file__))
+logger.info('Start: {}'.format(__file__))
 
 with open(BEST_MODEL_INFO_PATH, 'r') as f:
     best_model_path = f.readline().strip()

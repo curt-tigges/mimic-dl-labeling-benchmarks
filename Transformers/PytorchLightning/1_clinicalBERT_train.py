@@ -7,7 +7,7 @@ from mimic_models import *
 from mimic_constants import *
 from cs_utils import *
 
-logger.info('Start: '.format(__file__))
+logger.info('Start: {}'.format(__file__))
 
 ############################################
 # 1. Load & Pre-process the data

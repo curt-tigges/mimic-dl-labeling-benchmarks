@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mimic_constants import *
 from cs_utils import *
 
-logger.info('Start: '.format(__file__))
+logger.info('Start: {}'.format(__file__))
 
 ############################################
 # Pickling training data
