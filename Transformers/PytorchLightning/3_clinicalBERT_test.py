@@ -26,7 +26,7 @@ model = model.to(device)
 model.eval()
 logger.info('Load trained model end')
 
-test_df = load_pickle('./test.pkl')
+test_df = load_pickle(TEST_PICKLE)
 x_test = test_df['TEXT']
 
 mlb = MultiLabelBinarizer()

@@ -22,8 +22,8 @@ logger.info("Best threshold pick start")
 input_ids = load_pickle(PICKLE_TEST_INPUT_IDS)
 attention_masks = load_pickle(PICKLE_TEST_ATTENTION_MASKS)
 
-train_df = load_pickle('./train.pkl')
-test_df = load_pickle('./test.pkl')
+train_df = load_pickle(TRAIN_PICKLE)
+test_df = load_pickle(TEST_PICKLE)
 
 x_tr = train_df['TEXT']
 x_test = test_df['TEXT']

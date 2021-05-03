@@ -1,0 +1,4 @@
+python 0_clinicalBERT_preprocess.py
+python 1_clinicalBERT_train.py
+python 2_clinicalBERT_threshold_find.py
+python 3_clinicalBERT_test.py

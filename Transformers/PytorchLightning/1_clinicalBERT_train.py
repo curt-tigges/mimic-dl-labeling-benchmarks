@@ -9,9 +9,9 @@ from cs_utils import *
 ############################################
 # 1. Load & Pre-process the data
 ############################################
-train_df = load_pickle('./train.pkl')
-eval_df = load_pickle('./dev.pkl')
-test_df = load_pickle('./test.pkl')
+train_df = load_pickle(TRAIN_PICKLE)
+eval_df = load_pickle(DEV_PICKLE)
+test_df = load_pickle(TEST_PICKLE)
 
 x_tr = train_df['TEXT']
 x_val = eval_df['TEXT']

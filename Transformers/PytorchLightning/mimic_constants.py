@@ -15,6 +15,9 @@ PICKLE_TEST_INPUT_IDS = "./pickle_test_input_ids.pkl"
 PICKLE_TEST_ATTENTION_MASKS = "./pickle_test_attention_masks.pkl"
 TEST_PREDICT_OUTS = './pickle_test_predict_outs.pkl'
 TEST_TRUE_LABELS = './pickle_test_true_labels.pkl'
+TRAIN_PICKLE = './pickle_train.pkl'
+DEV_PICKLE = './pickle_eval.pkl'  # for evaluation
+TEST_PICKLE = './pickle_test.pkl'
 
 FOR_LOCAL_TEST = False
 

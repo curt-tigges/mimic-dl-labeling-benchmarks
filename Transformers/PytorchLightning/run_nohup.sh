@@ -1,0 +1,1 @@
+nohup /bin/sh run_all.sh > logs.txt 2>&1 &
