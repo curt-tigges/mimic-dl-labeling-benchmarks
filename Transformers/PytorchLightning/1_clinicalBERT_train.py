@@ -1,6 +1,7 @@
 from pytorch_lightning.callbacks import ModelCheckpoint
 from sklearn.preprocessing import MultiLabelBinarizer
 from transformers import BertTokenizer
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from mimic_models import *
 from mimic_constants import *
@@ -73,15 +74,23 @@ checkpoint_callback = ModelCheckpoint(
     mode='min',  # mode of the monitored quantity for optimization
 )
 
+early_stop_callback = EarlyStopping(
+   monitor='val_accuracy',
+   min_delta=0.00,
+   patience=2,
+   verbose=False,
+   mode='auto'
+)
+
 # Instantiate the Model Trainer
 if torch.cuda.is_available():
     # for GPUs
     trainer = pl.Trainer(max_epochs=N_EPOCHS, gpus=1, accelerator='ddp',
-                         callbacks=[checkpoint_callback], progress_bar_refresh_rate=30)
+                         callbacks=[checkpoint_callback, early_stop_callback], progress_bar_refresh_rate=30)
 else:
     # for CPUs
     trainer = pl.Trainer(max_epochs=N_EPOCHS, gpus=0,
-                         callbacks=[checkpoint_callback], progress_bar_refresh_rate=30)
+                         callbacks=[checkpoint_callback, early_stop_callback], progress_bar_refresh_rate=30)
 
 # Train the Classifier Model
 trainer.fit(model, data_module)

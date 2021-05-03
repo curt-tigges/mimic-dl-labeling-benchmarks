@@ -3,7 +3,6 @@ from sklearn import metrics
 from sklearn.preprocessing import MultiLabelBinarizer
 
 from cs_utils import *
-from mimic_constants import *
 from mimic_evaluation import *
 from mimic_models import *
 from mimic_utils import *
@@ -42,15 +41,11 @@ attention_masks = load_pickle(PICKLE_TEST_ATTENTION_MASKS)
 flat_pred_outs = 0
 flat_true_labels = 0
 
-# Tracking variables
-pred_outs = load_pickle(TEST_PREDICT_OUTS)
-true_labels = load_pickle(TEST_TRUE_LABELS)
-
 # Combine the results across all batches.
-flat_pred_outs = np.concatenate(pred_outs, axis=0)
+flat_pred_outs = load_pickle(TEST_PREDICT_OUTS)
 
 # Combine the correct labels for each batch into a single list.
-flat_true_labels = np.concatenate(true_labels, axis=0)
+flat_true_labels = load_pickle(TEST_TRUE_LABELS)
 
 # convert labels to 1D array
 y_true = flat_true_labels.ravel()

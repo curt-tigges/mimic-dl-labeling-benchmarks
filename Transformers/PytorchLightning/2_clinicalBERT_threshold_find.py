@@ -92,17 +92,18 @@ for batch in pred_dataloader:
     pred_outs.append(pred_out)
     true_labels.append(label_ids)
 
-with open(TEST_PREDICT_OUTS, 'w') as f:
-    pickle.dump(pred_outs, f)
-
-with open(TEST_TRUE_LABELS, 'w') as f:
-    pickle.dump(true_labels, f)
 
 # Combine the results across all batches.
 flat_pred_outs = np.concatenate(pred_outs, axis=0)
 
 # Combine the correct labels for each batch into a single list.
 flat_true_labels = np.concatenate(true_labels, axis=0)
+
+with open(TEST_PREDICT_OUTS, 'w') as f:
+    pickle.dump(flat_pred_outs, f)
+
+with open(TEST_TRUE_LABELS, 'w') as f:
+    pickle.dump(flat_true_labels, f)
 
 # Predictions of Tags in Test set
 # define candidate threshold values
