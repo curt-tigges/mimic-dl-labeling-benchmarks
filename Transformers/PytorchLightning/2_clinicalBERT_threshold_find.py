@@ -102,7 +102,7 @@ flat_pred_outs = np.concatenate(pred_outs, axis=0)
 flat_true_labels = np.concatenate(true_labels, axis=0)
 
 with open(TEST_PREDICT_OUTS, 'wb') as f:
-    pickle.dump(flat_pred_outs.to_list, f)
+    pickle.dump(flat_pred_outs, f)
 
 with open(TEST_TRUE_LABELS, 'wb') as f:
     pickle.dump(flat_true_labels, f)
