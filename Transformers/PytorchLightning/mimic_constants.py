@@ -33,7 +33,7 @@ BERT_MODEL_NAME = 'emilyalsentzer/Bio_ClinicalBERT'
 # Initialize the Hyperparameters
 ############################################
 NUM_WORKERS = 32
-N_EPOCHS = 12
+N_EPOCHS = 200
 BATCH_SIZE = 32
 MAX_LEN = 512
 LR = 2e-05
