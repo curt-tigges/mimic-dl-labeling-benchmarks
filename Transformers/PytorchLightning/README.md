@@ -6,19 +6,24 @@ Using Transformers pre-trained model for medical code predictions using MIMIC II
 
 # Requirements
 
-## CAML's preprocessed data:
+## Set path in mimic_constants.py
    
+    # CAML's preprocessed data
     MIMIC_3_DIR = '/CS598-DLH/caml-mimic/mimicdata/mimic3'
    
 ## Conda environment
 
-    conda create -n multiLabelBERT python=3.7.1
+    conda create -n multiLabelBERT python=3.7.1 --yes
     conda activate multiLabelBERT
-    pip install -q pytorch-lightning
-    pip install -q bs4
-    pip install -q transformers
-    pip install pandas
-    pip install sklearn
-    pip install seaborn
-    pip install pylab
-
+    cat <<EOF | sudo tee ./requirements.txt
+    pytorch-lightning==1.2.8
+    transformers==4.5.1
+    pandas==1.2.4
+    scikit-learn==0.24.2
+    seaborn==0.11.1
+    EOF
+    
+    pip install -r requirements.txt
+    
+    * Some packages in conda channel has different name. e.g.) "sklearn" => "scikit-learn"
+ 
