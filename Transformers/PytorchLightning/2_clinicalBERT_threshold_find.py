@@ -7,6 +7,7 @@ from transformers import BertTokenizer
 from cs_utils import *
 from mimic_models import *
 from mimic_utils import *
+from mimic_constants import *
 
 logger.info('Start: {}'.format(__file__))
 
@@ -100,10 +101,10 @@ flat_pred_outs = np.concatenate(pred_outs, axis=0)
 # Combine the correct labels for each batch into a single list.
 flat_true_labels = np.concatenate(true_labels, axis=0)
 
-with open(TEST_PREDICT_OUTS, 'w') as f:
-    pickle.dump(flat_pred_outs, f)
+with open(TEST_PREDICT_OUTS, 'wb') as f:
+    pickle.dump(flat_pred_outs.to_list, f)
 
-with open(TEST_TRUE_LABELS, 'w') as f:
+with open(TEST_TRUE_LABELS, 'wb') as f:
     pickle.dump(flat_true_labels, f)
 
 # Predictions of Tags in Test set

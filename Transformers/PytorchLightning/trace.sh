@@ -1,0 +1,1 @@
+tail -F logs.txt

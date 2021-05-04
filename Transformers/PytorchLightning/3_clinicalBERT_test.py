@@ -6,6 +6,7 @@ from cs_utils import *
 from mimic_evaluation import *
 from mimic_models import *
 from mimic_utils import *
+from mimic_constants import *
 
 logger.info('Start: {}'.format(__file__))
 
