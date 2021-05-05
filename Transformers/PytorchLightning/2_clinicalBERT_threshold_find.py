@@ -10,6 +10,8 @@ from mimic_utils import *
 from mimic_constants import *
 
 logger.info('Start: {}'.format(__file__))
+logger.info('BERT_MODEL_NAME: {}'.format(BERT_MODEL_NAME))
+
 
 with open(BEST_MODEL_INFO_PATH, 'r') as f:
     best_model_path = f.readline().strip()
@@ -131,3 +133,5 @@ logger.info(f'Optimal Threshold Value = {opt_thresh}')
 
 with open(BEST_THRESHOLD_INFO_PATH, 'w') as f:
     f.write(str(opt_thresh))
+
+sys.exit(0)

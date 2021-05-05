@@ -9,6 +9,7 @@ from mimic_utils import *
 from mimic_constants import *
 
 logger.info('Start: {}'.format(__file__))
+logger.info('BERT_MODEL_NAME: {}'.format(BERT_MODEL_NAME))
 
 ############################################
 # Prepare testing
@@ -78,4 +79,5 @@ for key, value in sorted(metric.items()):
 
 print('===')
 
+sys.exit(0)
 

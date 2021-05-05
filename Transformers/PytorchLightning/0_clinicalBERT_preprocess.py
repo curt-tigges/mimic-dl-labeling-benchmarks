@@ -72,3 +72,4 @@ with open(PICKLE_TEST_INPUT_IDS, 'wb') as f:
 with open(PICKLE_TEST_ATTENTION_MASKS, 'wb') as f:
     pickle.dump(attention_masks, f)
 
+sys.exit(0)

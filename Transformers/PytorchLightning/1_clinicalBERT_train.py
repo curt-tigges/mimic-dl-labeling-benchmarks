@@ -8,6 +8,7 @@ from mimic_constants import *
 from cs_utils import *
 
 logger.info('Start: {}'.format(__file__))
+logger.info('BERT_MODEL_NAME: {}'.format(BERT_MODEL_NAME))
 
 ############################################
 # 1. Load & Pre-process the data
@@ -94,5 +95,5 @@ logger.info('Best model checkpoint path: {}'.format(model_path))
 with open(BEST_MODEL_INFO_PATH, 'w') as f:
     f.write(model_path)
 
-
+sys.exit(0)
 
