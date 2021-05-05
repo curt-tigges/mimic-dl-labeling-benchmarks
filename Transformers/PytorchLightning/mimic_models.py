@@ -91,7 +91,7 @@ class MimicClassifier(pl.LightningModule):
     def __init__(self, n_classes=50, steps_per_epoch=None, n_epochs=3, lr=2e-5):
         super().__init__()
 
-        self.bert = AutoModel.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
+        self.bert = AutoModel.from_pretrained(BERT_MODEL_NAME)
 
         self.classifier = nn.Linear(self.bert.config.hidden_size, n_classes)  # outputs = number of labels
         self.steps_per_epoch = steps_per_epoch

@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from transformers import AutoModel, BertModel
 
 ############################################
 # CAML's preprocessed MIMIC data directory (train_50.csv, dev_50.csv, test_50.csv)
@@ -24,10 +25,9 @@ FOR_LOCAL_TEST = False
 ############################################
 # Model name define
 ############################################
-# BERT_TOKENIZER_DIR = './BERT_tokenizer/'
-# BERT_MODEL_NAME = "bert-base-cased"
-BERT_TOKENIZER_DIR = './BERT_tokenizer_emilyalsentzer/Bio_ClinicalBERT/'
-BERT_MODEL_NAME = 'emilyalsentzer/Bio_ClinicalBERT'
+BERT_MODEL_NAME = "emilyalsentzer/Bio_ClinicalBERT"
+# BERT_MODEL_NAME = "bert-base-uncased"
+
 
 ############################################
 # Initialize the Hyperparameters
