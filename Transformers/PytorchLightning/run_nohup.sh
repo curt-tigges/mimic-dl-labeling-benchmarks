@@ -1,1 +1,1 @@
-nohup /bin/sh run_all.sh > logs.txt 2>&1 &
+nohup /bin/sh run_all.sh > logs_$1.txt 2>&1 &
