@@ -60,7 +60,7 @@ model = MimicClassifier(n_classes=50, steps_per_epoch=steps_per_epoch, n_epochs=
 # saves a file like: input/MIMIC-epoch=02-val_loss=0.32.ckpt
 checkpoint_callback = ModelCheckpoint(
     monitor='val_loss',  # monitored quantity
-    filename='MIMIC-{epoch:02d}-{val_loss:.2f}',
+    filename=BERT_MODEL_NAME+'-{epoch:02d}-{val_loss:.2f}',
     save_top_k=3,  # save the top 3 models
     mode='min',  # mode of the monitored quantity for optimization
 )
