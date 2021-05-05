@@ -6,6 +6,7 @@ from mimic_constants import *
 from cs_utils import *
 
 logger.info('Start: {}'.format(__file__))
+logger.info('BERT_MODEL_NAME: {}'.format(BERT_MODEL_NAME))
 
 ############################################
 # Pickling training data
