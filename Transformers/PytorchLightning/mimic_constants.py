@@ -9,6 +9,14 @@ import sys
 MIMIC_3_DIR = '/CS598-DLH/caml-mimic/mimicdata/mimic3'
 
 ############################################
+# Model name define
+############################################
+#BERT_MODEL_NAME = "emilyalsentzer/Bio_ClinicalBERT"
+#BERT_MODEL_NAME = "bert-base-uncased"
+#BERT_MODEL_NAME = "bert-large-uncased"  # BATCH_SIZE = 8
+BERT_MODEL_NAME = "bionlp/bluebert_pubmed_mimic_uncased_L-12_H-768_A-12"
+
+############################################
 # Pipeline temp files
 ############################################
 BEST_MODEL_INFO_PATH = './best_model.txt'
@@ -22,13 +30,7 @@ DEV_PICKLE = './pickle_eval.pkl'  # for evaluation
 TEST_PICKLE = './pickle_test.pkl'
 
 FOR_LOCAL_TEST = False
-
-############################################
-# Model name define
-############################################
-BERT_MODEL_NAME = "emilyalsentzer/Bio_ClinicalBERT"
-# BERT_MODEL_NAME = "bert-base-uncased"
-
+REMOVE_STOP_WORDS = True
 
 ############################################
 # Initialize the Hyperparameters

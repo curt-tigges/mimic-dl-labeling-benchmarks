@@ -8,8 +8,15 @@ from cs_utils import *
 logger.info('Start: {}'.format(__file__))
 logger.info('BERT_MODEL_NAME: {}'.format(BERT_MODEL_NAME))
 
+
+def print_token_length_info(df, prefix):
+    word_cnt = df['length']
+    logger.info('{}: Total records: {}'.format(prefix, len(df)))
+    logger.info('{}: Average token length: {}'.format(prefix, np.mean(word_cnt)))
+    logger.info('{}: Over 512 tokens count: {}'.format(prefix, df[df['length'] > 512]['length'].count()))
+
 ############################################
-# Pickling training data
+# Load default CAML's training data
 ############################################
 train_df = pd.read_csv('%s/train_50.csv' % MIMIC_3_DIR)
 train_df['LABELS'] = train_df['LABELS'].apply(lambda x: x.split(';'))
@@ -20,21 +27,68 @@ eval_df['LABELS'] = eval_df['LABELS'].apply(lambda x: x.split(';'))
 test_df = pd.read_csv('%s/test_50.csv' % MIMIC_3_DIR)
 test_df['LABELS'] = test_df['LABELS'].apply(lambda x: x.split(';'))
 
-train_df.to_pickle(TRAIN_PICKLE)
-eval_df.to_pickle(DEV_PICKLE)
-test_df.to_pickle(TEST_PICKLE)
+############################################
+# Check the length of Clinical Notes
+############################################
+print_token_length_info(train_df, 'TRAIN')
+print_token_length_info(eval_df, 'EVAL')
+print_token_length_info(test_df, 'TEST')
 
-############################################
-# 2.2 Check the length of Clinical Notes
-############################################
-word_cnt = train_df.pop('length')
+word_cnt = train_df['length']
 plt.figure(figsize=[8, 5])
 plt.hist(word_cnt, bins=40)
+plt.axvline(512, c='r')  # BERT's token size limit
 plt.xlabel('Word Count/Clinical Note')
 plt.ylabel('# of Occurences')
 plt.title("Frequency of Word Counts/Clinical Note")
 plt.show()
 
+############################################
+# StopWords removing
+############################################
+if REMOVE_STOP_WORDS:
+    logger.info('Remove StopWords(eng) start')
+
+    # if FOR_LOCAL_TEST:
+    #     train_df = train_df[0:100]
+    #     eval_df = eval_df[0:100]
+    #     test_df = test_df[0:100]
+
+    from nltk.corpus import stopwords
+    stop = stopwords.words('english')
+
+    train_df['TEXT'] = train_df['TEXT'].apply(lambda x: (' '.join([item for item in x.split() if item not in stop])))
+    train_df['length'] = train_df.apply(lambda row: len(str(row['TEXT']).split()), axis=1)
+
+    eval_df['TEXT'] = eval_df['TEXT'].apply(lambda x: (' '.join([item for item in x.split() if item not in stop])))
+    eval_df['length'] = eval_df.apply(lambda row: len(str(row['TEXT']).split()), axis=1)
+
+    test_df['TEXT'] = test_df['TEXT'].apply(lambda x: (' '.join([item for item in x.split() if item not in stop])))
+    test_df['length'] = test_df.apply(lambda row: len(str(row['TEXT']).split()), axis=1)
+
+    print_token_length_info(train_df, 'TRAIN')
+    print_token_length_info(eval_df, 'EVAL')
+    print_token_length_info(test_df, 'TEST')
+
+    word_cnt_no_stopwords = train_df['length']
+    plt.figure(figsize=[8, 5])
+    plt.hist(word_cnt_no_stopwords, bins=40)
+    plt.axvline(512, c='r')  # BERT's token size limit
+    plt.xlabel('Word Count/Clinical Note (No StopWords)')
+    plt.ylabel('# of Occurences')
+    plt.title("Frequency of Word Counts/Clinical Note (No StopWords)")
+    plt.show()
+
+    logger.info('Remove StopWords(eng) end')
+    if FOR_LOCAL_TEST:
+        sys.exit(0)
+
+############################################
+# Pickling training data
+############################################
+train_df.to_pickle(TRAIN_PICKLE)
+eval_df.to_pickle(DEV_PICKLE)
+test_df.to_pickle(TEST_PICKLE)
 
 ############################################
 # Pickling test data's BERT input

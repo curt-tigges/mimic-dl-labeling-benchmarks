@@ -9,6 +9,11 @@ from cs_utils import *
 
 logger.info('Start: {}'.format(__file__))
 logger.info('BERT_MODEL_NAME: {}'.format(BERT_MODEL_NAME))
+logger.info('NUM_WORKERS: {}'.format(NUM_WORKERS))
+logger.info('N_EPOCHS: {}'.format(N_EPOCHS))
+logger.info('BATCH_SIZE: {}'.format(BATCH_SIZE))
+logger.info('MAX_LEN: {}'.format(MAX_LEN))
+logger.info('LR: {}'.format(LR))
 
 ############################################
 # 1. Load & Pre-process the data
