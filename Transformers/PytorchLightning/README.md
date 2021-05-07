@@ -21,9 +21,12 @@ Using Transformers pre-trained model for medical code predictions using MIMIC II
     pandas==1.2.4
     scikit-learn==0.24.2
     seaborn==0.11.1
+    nltk==3.6.1
+    torch==1.8.1
     EOF
     
     pip install -r requirements.txt
+    (for A100 / CUDA 11.0) pip install torch==1.8.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html
     
     * Some packages in conda channel has different name. e.g.) "sklearn" => "scikit-learn"
  

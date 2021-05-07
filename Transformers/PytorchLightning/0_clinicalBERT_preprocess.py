@@ -54,6 +54,9 @@ if REMOVE_STOP_WORDS:
     #     eval_df = eval_df[0:100]
     #     test_df = test_df[0:100]
 
+    import nltk
+    nltk.download('stopwords')
+
     from nltk.corpus import stopwords
     stop = stopwords.words('english')
 
