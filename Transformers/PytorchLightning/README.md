@@ -10,6 +10,9 @@ Using Transformers pre-trained model for medical code predictions using MIMIC II
    
     # CAML's preprocessed data
     MIMIC_3_DIR = '/CS598-DLH/caml-mimic/mimicdata/mimic3'
+
+    # define whether filtering out stop words or not
+    REMOVE_STOP_WORDS = True
    
 ## Conda environment
 
