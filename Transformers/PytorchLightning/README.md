@@ -30,3 +30,16 @@ Using Transformers pre-trained model for medical code predictions using MIMIC II
     
     * Some packages in conda channel has different name. e.g.) "sklearn" => "scikit-learn"
  
+# How to use
+
+# Preprocessing
+    python 0_clinicalBERT_preprocess.py
+
+# Train
+    python 1_clinicalBERT_train.py
+
+# Find the best threshold
+    python 2_clinicalBERT_threshold_find.py
+
+# Test
+    python 3_clinicalBERT_test.py
