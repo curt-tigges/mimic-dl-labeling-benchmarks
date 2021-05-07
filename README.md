@@ -1,18 +1,8 @@
-# mimic-dl-labeling-benchmarks
-
-## Dependencies
-* Python ?
-* pytorch ?
-* transformers ?
-* tensorflow ?
-* gensim ?  # for CAML
-* nltk ?    # for CAML
-* numpy 1.19.2
-* scipy 1.5.2 
-* pandas 1.1.5
-* jupyter-notebook 5.0.0    # common
-
-Other versions may also work, but the ones listed are the ones I've used
+# An empirical comparison of deep learning models for ICD-9 code assignment using MIMIC-III clinical notes
+Survey deep learning architectures and create a comparative benchmark with standardized data.
 
 ## References
-* CAML: [code](https://github.com/GabrielSandoval/caml-mimic)
+* CAML: [paper](https://arxiv.org/abs/1802.05695), [code](https://github.com/jamesmullenbach/caml-mimic)
+* HLAN: [paper](https://arxiv.org/abs/2010.15728), [code](https://github.com/acadTags/Explainable-Automated-Medical-Coding)
+* MultiResCNN: [paper](https://arxiv.org/abs/2010.15728), [code](https://github.com/foxlf823/Multi-Filter-Residual-Convolutional-Neural-Network)
+* Transformers
