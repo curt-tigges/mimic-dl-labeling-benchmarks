@@ -79,5 +79,7 @@ for key, value in sorted(metric.items()):
 
 print('===')
 
+draw_multilabel_roc_curve(metric)
+
 sys.exit(0)
 
