@@ -30,7 +30,7 @@ from sklearn.preprocessing import label_binarize
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.metrics import roc_auc_score
 
-lw = 2
+line_width = 2
 
 def do_multilabel_classify():
 
@@ -106,7 +106,7 @@ def multilabel_problem(fpr, tpr, roc_auc, n_classes):
     #              label='ROC curve of class {0} (area = {1:0.2f})'
     #                    ''.format(i, roc_auc[i]))
 
-    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
+    plt.plot([0, 1], [0, 1], 'k--', lw=line_width)
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
