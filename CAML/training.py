@@ -25,6 +25,7 @@ import persistence
 import learn.models as models
 import learn.tools as tools
 
+
 def main(args):
     start = time.time()
     args, model, optimizer, params, dicts = init(args)
@@ -286,6 +287,9 @@ def test(model, Y, epoch, data_path, fold, gpu, version, code_inds, dicts, sampl
     #get metrics
     k = 5 if num_labels == 50 else [8,15]
     metrics = evaluation.all_metrics(yhat, y, k=k, yhat_raw=yhat_raw)
+
+    evaluation.draw_multilabel_roc_curve(metrics)
+
     evaluation.print_metrics(metrics)
     metrics['loss_%s' % fold] = np.mean(losses)
     return metrics

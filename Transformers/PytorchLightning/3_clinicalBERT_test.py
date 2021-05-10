@@ -73,13 +73,9 @@ y = flat_true_labels            # binary ground truth matrix
 yhat = np.array(y_pred_labels)  # binary predictions matrix
 yhat_raw = flat_pred_outs       # score matrix (floats)
 
-metric = all_metrics(yhat, y, k=5, yhat_raw=yhat_raw)
-for key, value in sorted(metric.items()):
-    print('{}: {}'.format(key, value))
-
-print('===')
-
-draw_multilabel_roc_curve(metric)
+metrics = all_metrics(yhat, y, k=5, yhat_raw=yhat_raw)
+print_metrics(metrics)
+draw_multilabel_roc_curve(metrics)
 
 sys.exit(0)
 
