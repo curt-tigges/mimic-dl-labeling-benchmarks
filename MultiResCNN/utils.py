@@ -7,8 +7,6 @@ import gensim.models.word2vec as w2v
 import gensim.models.fasttext as fasttext
 import codecs
 import re
-import matplotlib.pyplot as plt
-import time
 
 def gensim_to_embeddings(wv_file, vocab_file, Y, outfile=None):
     model = gensim.models.Word2Vec.load(wv_file)
@@ -762,16 +760,13 @@ from sklearn.metrics import roc_curve, auc
 def auc_metrics(yhat_raw, y, ymic):
     if yhat_raw.shape[0] <= 1:
         return
-
-    n_classes = y.shape[1]
-
     fpr = {}
     tpr = {}
     roc_auc = {}
     #get AUC for each label individually
     relevant_labels = []
     auc_labels = {}
-    for i in range(n_classes):
+    for i in range(y.shape[1]):
         #only if there are true positives for this label
         if y[:,i].sum() > 0:
             fpr[i], tpr[i], _ = roc_curve(y[:,i], yhat_raw[:,i])
@@ -781,34 +776,16 @@ def auc_metrics(yhat_raw, y, ymic):
                     auc_labels["auc_%d" % i] = auc_score
                     relevant_labels.append(i)
 
-    ################################
-    # micro-AUC: just look at each individual prediction
-    ################################
+    #macro-AUC: just average the auc scores
+    aucs = []
+    for i in relevant_labels:
+        aucs.append(auc_labels['auc_%d' % i])
+    roc_auc['auc_macro'] = np.mean(aucs)
+
+    #micro-AUC: just look at each individual prediction
     yhatmic = yhat_raw.ravel()
     fpr["micro"], tpr["micro"], _ = roc_curve(ymic, yhatmic)
-    roc_auc["auc_micro_fpr"] = fpr["micro"]
-    roc_auc["auc_micro_tpr"] = tpr["micro"]
     roc_auc["auc_micro"] = auc(fpr["micro"], tpr["micro"])
-
-    ################################
-    # macro-AUC
-    # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html#plot-roc-curves-for-the-multilabel-problem
-    ################################
-
-    # First aggregate all false positive rates
-    all_fpr = np.unique(np.concatenate([fpr[i] for i in range(n_classes)]))
-
-    # Then interpolate all ROC curves at this points
-    mean_tpr = np.zeros_like(all_fpr)
-    for i in range(n_classes):
-        mean_tpr += np.interp(all_fpr, fpr[i], tpr[i])
-
-    # Finally average it and compute AUC
-    mean_tpr /= n_classes
-
-    roc_auc["auc_macro_fpr"] = all_fpr
-    roc_auc["auc_macro_tpr"] = mean_tpr
-    roc_auc["auc_macro"] = auc(all_fpr, mean_tpr)
 
     return roc_auc
 
@@ -1041,28 +1018,3 @@ def build_pretrain_embedding(embedding_path, word_alphabet, norm):
                    lowercase_and_digits_replaced_with_zeros_found*100.0/len(word_alphabet), not_match*100.0/len(word_alphabet)))
 
     return pretrain_emb, embedd_dim
-
-
-def draw_multilabel_roc_curve(_metric, filename=None, line_width=2):
-    if filename is None:
-        date = time.strftime("%Y%m%d_%H%M%S")
-        filename = 'ROC_curve_{}.png'.format(date)
-
-    plt.figure()
-    plt.plot(_metric["auc_micro_fpr"], _metric["auc_micro_tpr"],
-             label='micro-average ROC curve (area = {0:0.2f})'
-                   ''.format(_metric["auc_micro"]),
-             color='deeppink', linestyle=':', linewidth=4)
-
-    plt.plot(_metric["auc_macro_fpr"], _metric["auc_macro_tpr"],
-             label='macro-average ROC curve (area = {0:0.2f})'
-                   ''.format(_metric["auc_macro"]),
-             color='navy', linestyle=':', linewidth=4)
-    plt.plot([0, 1], [0, 1], 'k--', lw=line_width)
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.legend(loc="lower right")
-    plt.savefig(filename, bbox_inches='tight')
-    plt.show()

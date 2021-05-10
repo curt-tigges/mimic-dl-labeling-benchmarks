@@ -398,6 +398,45 @@ if __name__ == "__main__":
     draw_multilabel_roc_curve(metric)
 
 
+    ###########################################
+    # draw MultiResCNN ROC curve from files
+    ###########################################
+    fpr = {}
+    tpr = {}
+    roc_auc = {}
+    n_classes = 50
+
+    y_test = np.loadtxt(open("../../Data/MultiResCNN_result/y.csv", "rb"), delimiter=",")
+    y_score = np.loadtxt(open("../../Data/MultiResCNN_result/y_hat.csv", "rb"), delimiter=",")
+
+    for i in range(n_classes):
+        # only if there are true positives for this label
+        if y_test[:, i].sum() > 0:
+            fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
+
+    ################################
+    # micro-AUC: just look at each individual prediction
+    ################################
+    fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
+    roc_auc["auc_micro_fpr"] = fpr["micro"]
+    roc_auc["auc_micro_tpr"] = tpr["micro"]
+    roc_auc["auc_micro"] = auc(fpr["micro"], tpr["micro"])
+
+    ################################
+    # macro-AUC
+    # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html#plot-roc-curves-for-the-multilabel-problem
+    ################################
+    all_fpr = np.unique(np.concatenate([fpr[i] for i in range(n_classes)]))
+    mean_tpr = np.zeros_like(all_fpr)
+    for i in range(n_classes):
+        mean_tpr += np.interp(all_fpr, fpr[i], tpr[i])
+    mean_tpr /= n_classes
+
+    roc_auc["auc_macro_fpr"] = all_fpr
+    roc_auc["auc_macro_tpr"] = mean_tpr
+    roc_auc["auc_macro"] = auc(all_fpr, mean_tpr)
+
+    draw_multilabel_roc_curve(roc_auc)
 
 
 

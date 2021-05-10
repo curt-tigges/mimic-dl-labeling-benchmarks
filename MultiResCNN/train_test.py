@@ -1,7 +1,7 @@
 
 import torch
 import numpy as np
-from utils import all_metrics, print_metrics, draw_multilabel_roc_curve
+from utils import all_metrics, print_metrics
 
 def train(args, model, optimizer, epoch, gpu, data_loader):
 
@@ -103,9 +103,6 @@ def test(args, model, data_path, fold, gpu, dicts, data_loader):
 
     k = 5 if num_labels == 50 else [8,15]
     metrics = all_metrics(yhat, y, k=k, yhat_raw=yhat_raw)
-
-    draw_multilabel_roc_curve(metrics)
     print_metrics(metrics)
-
     metrics['loss_%s' % fold] = np.mean(losses)
     return metrics
